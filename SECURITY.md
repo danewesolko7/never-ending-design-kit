@@ -23,6 +23,6 @@ with the self-test passing and a dated line in `engine/MANIFEST`; the advisory i
 - Secrets or client data reaching a pack (`tools/pack.py`) or the repository.
 
 ## Out of scope
-- The third-party tools the kit installs (axe-core, Playwright, Fontsource, Pillow): report those upstream.
+- The third-party tools the kit installs (axe-core, Playwright, Fontsource): report those upstream.
 - Legal sufficiency of policy wording. The kit checks that required pages exist and cover their topics; a lawyer
   approves the words.

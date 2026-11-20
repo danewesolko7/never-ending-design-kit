@@ -13,9 +13,12 @@ mkdir -p "$W" && rsync -a --exclude=/projects --exclude=/studio --exclude=/engin
 cd "$W"; cp -R studio.example studio; mkdir -p projects; cp -r engine/fixtures/sample projects/fx
 cp engine/fixtures/registry.jsonl studio/registry/fingerprints.jsonl; : > studio/registry/usage-log.jsonl
 # the kit holds no images: the fixture's one photo is drawn here, so the golden files test the real-image path
-mkdir -p projects/fx/images && python3 -c "from PIL import Image; Image.new('RGB', (1200, 1500), (120, 110, 100)).save('projects/fx/images/hero.jpg', quality=60)"
+mkdir -p projects/fx/images
 printf '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32"/></svg>\n' > projects/fx/images/favicon.svg
-export NODE_PATH="$(cat .node)" KIT_HOME="$W"; cd engine
+export NODE_PATH="$(cat .node)" KIT_HOME="$W"
+node -e "const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage();const d=await p.evaluate(()=>{const c=document.createElement('canvas');c.width=1200;c.height=1500;const x=c.getContext('2d');x.fillStyle='rgb(120,110,100)';x.fillRect(0,0,1200,1500);return c.toDataURL('image/jpeg',0.6)});require('fs').writeFileSync(process.argv[1],Buffer.from(d.split(',')[1],'base64'));await b.close()})().catch(e=>{console.error(e.message);process.exit(1)})" projects/fx/images/hero.jpg \
+  || { echo "selftest: could not draw the fixture photo (playwright's Chromium)"; exit 1; }
+cd engine
 python3 - <<'PY'
 import json; f='../projects/fx/brief.json'; d=json.load(open(f)); d['project']='fx'; json.dump(d, open(f,'w'))
 PY
@@ -83,7 +86,7 @@ step "greek.py --name renders one rough per concept"  bash -c 'cp ../projects/fx
 step "build.py --board builds a direction board"      bash -c 'cp ../projects/fx/tokens.json ../projects/fx/tokens-d1.json && python3 tools/build.py home --board d1 --tokens tokens-d1.json && test -f ../projects/fx/out/boards/d1/home.html && test -f ../projects/fx/out/boards/d1/site.css && node tools/shot.js ../projects/fx/out/boards/d1/home.html --widths 1440,390 --out ../projects/fx/out/boards/png/d1 >/dev/null && test -f ../projects/fx/out/boards/png/d1/home-1440-m.png'
 step "milestone.py frames concepts and directions"    bash -c 'python3 tools/milestone.py G3a | grep -q "^publish:" && python3 tools/milestone.py G3b/G4a | grep -q "^publish:"'
 step "pass.py --rough measures the rough"             python3 tools/pass.py --rough
-step "contact.py makes a sheet of 1000px or less"     bash -c 'python3 tools/contact.py ../projects/fx/out/sheet.png "../projects/fx/out/rough/png/home-*-m.png" && python3 -c "from PIL import Image;i=Image.open(\"../projects/fx/out/sheet.png\");assert max(i.size)<=1000"'
+step "contact.py makes a sheet of 1000px or less"     bash -c 'python3 tools/contact.py ../projects/fx/out/sheet.png "../projects/fx/out/rough/png/home-*-m.png" && python3 -c "import struct;h=open(\"../projects/fx/out/sheet.png\",\"rb\").read(24);assert h[:8]==b\"\\x89PNG\\r\\n\\x1a\\n\";assert max(struct.unpack(\">II\",h[16:24]))<=1000"'
 step "fontcheck.py passes with licences"              python3 tools/fontcheck.py
 echo "-- phase 2b: compliance"
 cp -r ../projects/fx ../projects/fx.bak

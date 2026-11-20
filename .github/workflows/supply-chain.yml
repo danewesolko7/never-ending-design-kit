@@ -18,8 +18,6 @@ jobs:
       - name: npm audit (pinned kit tools)
         working-directory: engine/deps
         run: npm audit --audit-level=high --package-lock-only
-      - name: pip-audit (requirements.txt)
-        run: python3 -m pip install pip-audit && pip-audit -r engine/requirements.txt
       - name: SBOM (CycloneDX)
         if: always()
         working-directory: engine/deps

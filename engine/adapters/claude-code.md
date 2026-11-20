@@ -4,7 +4,7 @@ How the neutral steps the tools print ("save", "publish") are done in Claude Cod
 
 - **Workspace.** Open Claude Code in the studio's workspace: the folder holding `studio/` (a private repository) and
   `projects/`. That folder is `KIT_HOME`; the `studio` command on PATH finds the engine inside the plugin.
-- **Commands.** `/studio:new`, `/studio:next`, `/studio:decide`, `/studio:status`, `/studio:sweep`, `/studio:retro`.
+- **Commands.** `/design-studio-kit:new`, `/design-studio-kit:next`, `/design-studio-kit:decide`, `/design-studio-kit:status`, `/design-studio-kit:sweep`, `/design-studio-kit:retro`.
 - **Hooks** enforce the gates, rebuild after page edits, and log every Read, so words read and images viewed are
   measured, not reported. Nothing to log by hand.
 - **Publish a gate canvas.** milestone.py prints a page and its files. Publish `out/canvas/index.html` with the Artifact

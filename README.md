@@ -8,12 +8,23 @@ history.
 
 ## Install (Claude Code)
 ```
-/plugin marketplace add <owner>/<repo>
-/plugin install studio@never-ending-design-kit
+/plugin marketplace add danewesolko7/never-ending-design-kit
+/plugin install design-studio-kit@never-ending-design-kit
 ```
-Needs node, python3 with Pillow (`python3 -m pip install -r engine/requirements.txt`) and a network connection the
+Needs node and python3 (standard library only, no pip packages) and a network connection the
 first time: setup installs the pinned tools (axe-core, playwright and its Chromium, fonts) into one cache
 (`$KIT_CACHE`, default `~/.cache/design-kit`).
+
+### What the plugin runs and installs
+- **Hooks, in every session where the plugin is enabled.** Before each Write, Edit or NotebookEdit, and after each
+  Write, Edit or Read, plus at Stop, Claude Code runs `python3 engine/tools/hook.py`. Outside a studio workspace (a
+  folder holding `studio/` or `projects/`) it exits at once and changes nothing, but it still needs `python3` on PATH.
+  Disable the plugin in sessions where you do not want it.
+- **First run of `studio start`.** `npm ci` from the pinned lock in `engine/deps/` (axe-core, playwright, the
+  impeccable detector, and fonts), then playwright's Chromium, all into `$KIT_CACHE` (default `~/.cache/design-kit`)
+  and the playwright browser cache. Nothing is installed globally, and nothing is written into the plugin folder.
+- **Where projects live.** `studio/` and `projects/` are created in the workspace you open Claude Code in, never in
+  the plugin's install folder, so plugin updates never touch your work.
 
 ## Use
 Open Claude Code in a studio workspace: a folder that holds `studio/` (your studio, a private repository) and
@@ -21,12 +32,12 @@ Open Claude Code in a studio workspace: a folder that holds `studio/` (your stud
 
 | Command | Does |
 |---|---|
-| `/studio:new <project>` | starts a project and runs the brief (S0), then stops at G0 |
-| `/studio:next [project]` | runs the current stage with its agents, then stops at the next gate |
-| `/studio:decide <gate> approve \| pick <n> \| fixes "..." \| stop` | records the CD's decision |
-| `/studio:sweep <A\|B\|C> [project]` | one inspiration sweep: the libraries first, then the web |
-| `/studio:status [project]` | where a project stands |
-| `/studio:retro [project]` | the studio director's retro after packaging, ending at G10 |
+| `/design-studio-kit:new <project>` | starts a project and runs the brief (S0), then stops at G0 |
+| `/design-studio-kit:next [project]` | runs the current stage with its agents, then stops at the next gate |
+| `/design-studio-kit:decide <gate> approve \| pick <n> \| fixes "..." \| stop` | records the CD's decision |
+| `/design-studio-kit:sweep <A\|B\|C> [project]` | one inspiration sweep: the libraries first, then the web |
+| `/design-studio-kit:status [project]` | where a project stands |
+| `/design-studio-kit:retro [project]` | the studio director's retro after packaging, ending at G10 |
 
 Agents, one per role: inspiration scout, researcher, content strategist, layout designer, art director, copywriter,
 comp designer, systems designer, production designer, studio director. Choice stages (concepts at S3, directions at
@@ -109,14 +120,14 @@ edits), work on a branch, run `bash engine/tools/selftest.sh` (all steps pass; C
 dated line to `engine/MANIFEST` [changes], and merge. `claude plugin validate .` checks the plugin.
 `CONTRIBUTING.md` has the full path, including how to add a jurisdiction; `SECURITY.md` says how to report a
 vulnerability; `CODE_OF_CONDUCT.md` applies to everyone taking part. CI also audits the pinned dependencies
-(`npm audit`, `pip-audit`) and publishes a CycloneDX SBOM; Dependabot proposes updates weekly.
+(`npm audit`) and publishes a CycloneDX SBOM; Dependabot proposes updates weekly.
 
 ## Supported platforms
 | | Supported |
 |---|---|
 | Hosts | Claude Code (plugin), a claude.ai Project, any agent or shell via `bin/studio` |
 | Operating systems | macOS and Linux (CI runs both); Windows through WSL |
-| Runtimes | Node 20 or later; Python 3.9 or later with Pillow from `engine/requirements.txt` |
+| Runtimes | Node 20 or later; Python 3.9 or later (standard library only) |
 | Automated browser | Chromium (Playwright, pinned). Safari, Firefox and Edge are manual checks in the handover |
 | Built sites | Static HTML and one CSS file; any static host that can send headers (Netlify, Cloudflare Pages, Vercel, nginx, Apache) |
 

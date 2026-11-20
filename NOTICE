@@ -3,7 +3,7 @@ Copyright 2026 Dane Wesolko
 
 Licensing
 - Code: Apache License 2.0 (LICENSE). Covers engine/tools/, engine/primitives/, engine/fixtures/, engine/deps/,
-  engine/requirements.txt, engine/settings.json, engine/MANIFEST, bin/, hooks/, .claude-plugin/ and .github/.
+  engine/settings.json, engine/MANIFEST, bin/, hooks/, .claude-plugin/ and .github/.
   engine/primitives/ includes consent.js and consent.css, which projects ship in their sites.
 - Content: Creative Commons Attribution 4.0 International (LICENSE-CONTENT). Covers engine/prompts/, engine/rules/,
   engine/ref/ (including library.md, catalogue.json and defaults.json), engine/adapters/, agents/, commands/,
@@ -39,7 +39,7 @@ Third-party material
   for this kit.
 - The kit downloads, and never redistributes, these dependencies, each under its own licence: axe-core (MPL-2.0),
   Playwright (Apache-2.0, including its agent CLI), impeccable and its platform engine (Apache-2.0; only its
-  detect command is used, with telemetry off), Fontsource font packages (each face's own licence, usually SIL OFL 1.1), Pillow (MIT-CMU).
+  detect command is used, with telemetry off), Fontsource font packages (each face's own licence, usually SIL OFL 1.1).
 - Material licensed for internal use only (for example "free to use inside your company, not for resale") must not be
   copied into this repository. Re-derive the method from its original public source and cite that source instead.
 
