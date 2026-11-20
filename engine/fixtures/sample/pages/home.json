@@ -1,0 +1,5 @@
+{"id": "home", "title": "Home", "meta": {"title": "Larch Street Library: your neighbourhood branch", "description": "Books, quiet rooms and free classes, three streets from the park.", "og_image": "images/og.png"},
+ "sections": [
+  {"id": "s1", "partial": "opener", "text": {"kicker": "Branch library since 1931", "h1": "A quiet room three streets from the park", "lede": "Borrow books, use a computer, or sit and read. Everything here is free with a library card."}, "images": ["hero"]},
+  {"id": "s2", "primitive": "stack", "variant": "band", "text": {"h2": "What is on this month", "list": ["Story time for small children on Tuesday mornings", "Help with phones and laptops on Thursday", "A reading group on the first Saturday", "Homework help after school on weekdays", "Free tax forms in the front hall"]}},
+  {"id": "s3", "primitive": "stack", "text": {"h2": "Come and visit", "link": ["See opening hours and how to get here | visit.html", "Read how the branch began | about.html"]}}]}

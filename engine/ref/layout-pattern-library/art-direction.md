@@ -1,0 +1,2 @@
+## 17. Art direction (S4, S6 and S8)
+Art direction is a step of the process, run with graphic-art-direction: nested grids and pushed edges, typography as layout, type as image, image treatment, the page grid carrying meaning, period techniques from design-movement-library, and a signature per interior page at S8. Then run design-review, and do the appeal check: put the chosen greeked structure and the applied design side by side. If the only difference is colour, the pass has failed.

@@ -1,0 +1,202 @@
+{
+ "_about": "Kit defaults. Per-project overrides live in brief.json budget{}. read = words a stage reads; images = images it may view.",
+ "options_default": 3,
+ "reach_exempt": [
+  "specimen",
+  "thanks",
+  "404"
+ ],
+ "options_max": 3,
+ "batch_size": 2,
+ "tool_retries": 1,
+ "model_image_px": 1000,
+ "widths": [
+  1440,
+  768,
+  390,
+  320
+ ],
+ "artboard_px": 8000,
+ "page_weight_mb": 1.5,
+ "reading_level": 9,
+ "expansion": 1.3,
+ "seed_window": 5,
+ "delta_e": 10,
+ "benchmark_days": 90,
+ "budget_warn": 0.8,
+ "words_caps": {
+  "handoff": 250,
+  "brief": 300,
+  "research": 600,
+  "summary": 250,
+  "card": 150,
+  "state": 300,
+  "notes": 250,
+  "retro": 250
+ },
+ "caps": {
+  "0": {
+   "read": 2000,
+   "images": 0
+  },
+  "1": {
+   "read": 8000,
+   "images": 0
+  },
+  "2": {
+   "read": 3000,
+   "images": 0
+  },
+  "3": {
+   "read": 4000,
+   "images": 1
+  },
+  "4": {
+   "read": 4000,
+   "images": 4
+  },
+  "5": {
+   "read": 2500,
+   "images": 0,
+   "per_page": true
+  },
+  "6": {
+   "read": 5000,
+   "images": 1
+  },
+  "7": {
+   "read": 4000,
+   "images": 0
+  },
+  "8": {
+   "read": 3000,
+   "images": 1,
+   "per_page": true
+  },
+  "9": {
+   "read": 6000,
+   "images": 0
+  },
+  "10": {
+   "read": 3000,
+   "images": 0
+  }
+ },
+ "gates": {
+  "G0": {
+   "stage": 0,
+   "next": 1,
+   "visual": false,
+   "unlocks": "research"
+  },
+  "G1": {
+   "stage": 1,
+   "next": 2,
+   "visual": false,
+   "unlocks": "content"
+  },
+  "G2": {
+   "stage": 2,
+   "next": 3,
+   "visual": false,
+   "unlocks": "structure concepts"
+  },
+  "G3a": {
+   "stage": 3,
+   "next": 4,
+   "visual": true,
+   "unlocks": "S4 directions on the chosen concept"
+  },
+  "G3b/G4a": {
+   "stage": 4,
+   "next": 4,
+   "visual": true,
+   "unlocks": "tokens, first screen"
+  },
+  "G4b": {
+   "stage": 4,
+   "next": 5,
+   "visual": true,
+   "unlocks": "copy and comp"
+  },
+  "G5": {
+   "stage": 5,
+   "next": 6,
+   "visual": false,
+   "unlocks": "comp"
+  },
+  "G6": {
+   "stage": 6,
+   "next": 7,
+   "visual": true,
+   "unlocks": "system"
+  },
+  "G7": {
+   "stage": 7,
+   "next": 8,
+   "visual": true,
+   "unlocks": "Design System artifact, pages"
+  },
+  "G8": {
+   "stage": 8,
+   "next": 8,
+   "visual": true,
+   "unlocks": "next batch; the last runs packaging"
+  },
+  "G10": {
+   "stage": 10,
+   "next": null,
+   "visual": false,
+   "unlocks": "kit update"
+  }
+ },
+ "reopen": {
+  "G0": [
+   "everything after G0",
+   "nothing, unless only a setting such as budget or lean mode changed"
+  ],
+  "G1": [
+   "copy that uses the changed facts",
+   "structure, direction, layout"
+  ],
+  "G2": [
+   "changed pages from G3 onward; the key page from G3 if it changed",
+   "pages untouched by the change"
+  ],
+  "G3a": [
+   "rough, first screen, key-page comp, system, pages",
+   "research, content, copy, direction card"
+  ],
+  "G3b/G4a": [
+   "tokens, first screen, comp finish, system, every page's styling",
+   "structure, copy, page JSON content"
+  ],
+  "G4b": [
+   "tokens and the first-screen partial",
+   "everything else"
+  ],
+  "G5": [
+   "text fields of the changed pages",
+   "layout and styling (a check reruns for widows and fit)"
+  ],
+  "G6": [
+   "system and pages that use the changed partials",
+   "earlier gates"
+  ],
+  "G7": [
+   "pages that use the changed components",
+   "earlier gates"
+  ],
+  "G8": [
+   "that batch only",
+   "everything else"
+  ]
+ },
+ "credit_unit": "tokens",
+ "sweep_min": {
+  "A": 6,
+  "B": 4,
+  "C": 4
+ },
+ "library_thin": 4
+}

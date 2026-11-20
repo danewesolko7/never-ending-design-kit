@@ -1,0 +1,8 @@
+{
+  "name": "studio",
+  "displayName": "Never-ending design kit",
+  "description": "An agentic design studio for websites: ten stages from brief to package, each ending at a creative-director gate. Agents per role, a starter technique library plus web inspiration sweeps, scripted craft checks, and hooks that enforce the gates.",
+  "author": { "name": "Dane Wesolko" },
+  "license": "Apache-2.0",
+  "keywords": ["design", "web design", "studio", "agents", "inspiration", "accessibility"]
+}

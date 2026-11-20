@@ -1,0 +1,5 @@
+# Graphic art direction: a technique repertoire
+
+The stage prompts run this at S4 (directions on the chosen greeked structure), S6 (the key page comp), S7 (chrome) and S8 (a signature per interior page). It is never run at S3: greeked structure has no style. It starts from the references gathered in inspiration-sweep C, applies design-foundations while composing, paces every push (section 0b), and hands the result to design-review (and at S6 and S8 to craft-pass first). It answers the standing complaint "we're still designing plain pages": compose every section as its own picture on the grid. When a movement or period is named, also load design-movement-library.
+
+Read `rules/rules.md`, `studio/taste.md` and the studio registry (`studio/registry/fingerprints.jsonl`, checked by `tools/uniq.py`) first. This is a menu of principles, not a recipe. It holds no pixel values and no project examples, because the next project would copy them. Choose every value fresh from the content, and keep each project's values in that project's own files (tokens.json and its hand-offs), never here.

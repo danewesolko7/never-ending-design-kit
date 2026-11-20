@@ -1,0 +1,13 @@
+## Banned defaults and what to use instead
+- Hero + three icon cards + stats strip + numbered steps + testimonials + CTA band -> sections planned in this table
+- A stock skeleton (nav, headline beside a form, stacked label-and-content rows) -> a page-level real-world form
+- Numbered 01/02/03 process cards or a four-step row -> the document the process produces, or a sanctioned exception
+- Bento grids -> the content's own grouping (a catalogue, a spec table, a schedule)
+- Logo walls and testimonials -> proof in the form the audience trusts
+- Ghost words; eyebrow labels over every heading -> plain headings; labels only where real documents use them
+- Ticker tapes and count-up numbers -> static figures with a source and a date
+- Fonts: DM Sans, DM Mono, Inter, Playfair Display, Bebas Neue, Barlow Condensed, Syne, Space Grotesk, Share Tech Mono -> a face from the subject's own lettering, or any unlisted face with a reason (the owner may name any font)
+- Cream paper grounds; near-black with one neon accent -> a palette from the identity artefacts
+- Particles, glow orbs, scanlines, noise, glitch text, custom cursors, gradient text, glassmorphism -> one signature move; other effects must carry information
+- Invented stats, fake testimonials, seamless, unlock, elevate, supercharge -> real facts, unsourced items marked, simulated facts labelled
+- Internal operations artefacts (job boards, work queues, staff schedules) and other customers' jobs, names or visit times, even simulated -> a form the customer actually sees

@@ -1,0 +1,13 @@
+# Design kit manifest. One working kit. kitcheck.sh reads [tools].
+# A change to the kit: edit on a branch, bash tools/selftest.sh (all steps pass), add a dated line under [changes], merge.
+
+[tools]
+kitlib.py start.sh gate.py pass.py build.py seed.py uniq.py fontcheck.py greek.py shot.js probe.js
+contact.py milestone.py checkpoint.py pack.py refs.py hook.py setup.sh kitcheck.sh selftest.sh
+
+[changes]
+2026-11-19 (CD): the kit begins. Engine (stage prompts P0 and S0-S10, rules, ref with the starter technique library,
+  primitives, tools, pinned deps, adapters, fixtures), the empty studio overlay (studio.example/), and the Claude Code
+  plugin (agents per role and an inspiration scout, /studio commands, gate hooks, bin/studio). Inspiration: the
+  libraries first, then web sweeps A, B and C. Every build starts from this kit and never changes it; kit changes go
+  through G10 with the self-test passing.

@@ -1,0 +1,2 @@
+{"id": "visit", "title": "Visit", "meta": {"title": "Visit Larch Street Library", "description": "Opening hours, the step-free entrance and the nearest bus stops.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "Opening hours and access", "body": ["The branch is open from ten in the morning until six in the evening, Monday to Saturday.", "The side entrance on Pine Lane has no steps and opens on its own."]}}]}

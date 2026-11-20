@@ -1,0 +1,2 @@
+{"id": "about", "title": "About", "meta": {"title": "About Larch Street Library", "description": "How a reading room in a shop front became the branch library on Larch Street.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "How the branch began", "body": ["The library opened in a shop front with two shelves of donated books.", "Neighbours raised money for a building, and the branch moved to Larch Street in later years."]}}]}

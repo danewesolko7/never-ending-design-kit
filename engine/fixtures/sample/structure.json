@@ -1,0 +1,7 @@
+{"page_form": "title page then chapters", "grid": {"columns": 12, "gutter": 24, "margin": 80, "nested": []},
+ "sections": [
+  {"id": "s1", "order": 1, "rhythm": "loud", "block": [{"t": "kicker", "start": 1, "span": 4}, {"t": "h1", "start": 1, "span": 8, "size": 96},
+     {"t": "lede", "start": 1, "span": 6}, {"t": "img", "start": 9, "span": 4, "h": 520, "bleed": "right"}]},
+  {"id": "s2", "order": 2, "rhythm": "normal", "ground": "tint", "block": [{"t": "h2", "start": 3, "span": 8}, {"t": "list", "start": 3, "span": 6, "items": 5}]},
+  {"id": "s3", "order": 3, "rhythm": "rest", "block": "h2+link"}],
+ "breakpoints": [390, 768, 1440]}

@@ -1,0 +1,7 @@
+.k-stack{padding:var(--s-6);max-width:72rem}
+.k-stack-band{background:var(--c-tint);max-width:none}
+.k-header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:var(--s-2)}
+a{color:var(--c-ink);text-underline-offset:4px}
+a:hover{text-decoration-thickness:var(--state-hover-underline)}
+.k-caption,.k-kicker{color:var(--c-ink-2)}
+@media (max-width:700px){.k-stack{padding:var(--s-5) var(--s-3)}}

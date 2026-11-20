@@ -1,0 +1,26 @@
+name: selftest
+on:
+  push:
+  pull_request:
+jobs:
+  selftest:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m pip install -r engine/requirements.txt
+      - name: Kit cache (axe-core, playwright, Chromium, fonts)
+        run: bash engine/tools/setup.sh
+      - name: Chromium system libraries (Linux)
+        if: runner.os == 'Linux'
+        run: sudo "$HOME/.cache/design-kit/node_modules/.bin/playwright" install-deps chromium
+      - run: bash engine/tools/selftest.sh

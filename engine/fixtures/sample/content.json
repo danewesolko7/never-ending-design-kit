@@ -1,0 +1,7 @@
+{"pages": [
+ {"id": "home", "title": "Home", "purpose": "Welcome and next step", "sections": [
+   {"id": "s1", "purpose": "Say what the branch is", "fact_ids": ["f1"], "form": "title page", "words": 40},
+   {"id": "s2", "purpose": "Show what is on", "fact_ids": [], "form": "list", "words": 60},
+   {"id": "s3", "purpose": "Next step", "fact_ids": [], "form": "links", "words": 20}]},
+ {"id": "about", "title": "About", "purpose": "History", "sections": [{"id": "s1", "purpose": "History", "fact_ids": [], "form": "essay", "words": 80}]},
+ {"id": "visit", "title": "Visit", "purpose": "Hours and access", "sections": [{"id": "s1", "purpose": "Hours", "fact_ids": [], "form": "timetable", "words": 50}]}]}

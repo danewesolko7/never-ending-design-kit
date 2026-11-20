@@ -1,0 +1,29 @@
+Never-ending design kit
+Copyright 2026 Dane Wesolko
+
+Licensing
+- Code: Apache License 2.0 (LICENSE). Covers engine/tools/, engine/primitives/, engine/fixtures/, engine/deps/,
+  engine/requirements.txt, engine/settings.json, engine/MANIFEST, bin/, hooks/, .claude-plugin/ and .github/.
+- Content: Creative Commons Attribution 4.0 International (LICENSE-CONTENT). Covers engine/prompts/, engine/rules/,
+  engine/ref/ (including library.md, catalogue.json and defaults.json), engine/adapters/, agents/, commands/,
+  skills/, studio.example/ and README.md. Reuse must credit "Never-ending design kit,
+  Dane Wesolko".
+
+Third-party material
+- No third-party code or text is reproduced. The reference sections describe methods and conventions in the kit's own
+  words and name their sources (for example Nielsen Norman Group, GOV.UK Service Manual and Design System, W3C WCAG,
+  Every Layout, Utopia, Refactoring UI, the FT Visual Vocabulary, Design Council). Those names identify sources; they
+  imply no endorsement, and their own works stay under their own terms.
+- engine/ref/library.md, the starter technique library, describes each technique in the kit's own words and names
+  the public work it was seen in; the linked works stay under their own terms.
+- engine/primitives/ implements layout patterns named in Every Layout (Heydon Pickering and Andy Bell) in CSS written
+  for this kit.
+- The kit downloads, and never redistributes, these dependencies, each under its own licence: axe-core (MPL-2.0),
+  Playwright (Apache-2.0), Fontsource font packages (each face's own licence, usually SIL OFL 1.1), Pillow (MIT-CMU).
+- Material licensed for internal use only (for example "free to use inside your company, not for resale") must not be
+  copied into this repository. Re-derive the method from its original public source and cite that source instead.
+
+Not included
+- No studio data: a studio's taste file, technique library, registry of past projects and history live in its own
+  private studio/ repository, which this repository ignores.
+- No images, client facts or project data.

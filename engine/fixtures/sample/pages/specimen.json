@@ -1,0 +1,38 @@
+{
+ "id": "specimen",
+ "title": "Specimen",
+ "nav": false,
+ "meta": {
+  "title": "Specimen: Larch Street Library components",
+  "description": "Every component in every state, for the system gate.",
+  "og_image": "images/og.png"
+ },
+ "sections": [
+  {
+   "id": "s1",
+   "primitive": "stack",
+   "text": {
+    "h1": "Components",
+    "body": "Each component appears here once in each of its states.",
+    "link": [
+     "A link in its default state | #s1"
+    ]
+   }
+  },
+  {
+   "id": "s2",
+   "primitive": "stack",
+   "variant": "band",
+   "text": {
+    "h2": "Lists and figures",
+    "list": [
+     "A list item in a band",
+     "A second list item"
+    ]
+   },
+   "images": [
+    "hero"
+   ]
+  }
+ ]
+}

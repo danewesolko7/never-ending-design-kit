@@ -1,0 +1,2 @@
+## 6. Hierarchy map
+Before drawing, write the page's hierarchy map using design-foundations sections 1 to 4: each size level (about five, never more than eight) with its size, weight and job (for example display figure, title, section heading, lead-in, body, evidence), the one dominant element per section, and what leads each section (heading, lead-in, figure or image). Check it later with the squint test on the page shot.

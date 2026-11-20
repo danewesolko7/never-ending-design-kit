@@ -1,0 +1,15 @@
+{
+  "description": "Studio kit gates and measuring: refuse writes a project's state does not allow, rebuild after page edits, log what is read, and hold a stage until its gate has run.",
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Write|Edit|NotebookEdit", "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engine/tools/hook.py\" pre", "timeout": 20 } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write|Edit", "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engine/tools/hook.py\" post", "timeout": 60 } ] },
+      { "matcher": "Read", "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engine/tools/hook.py\" read", "timeout": 20 } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/engine/tools/hook.py\" stop", "timeout": 20 } ] }
+    ]
+  }
+}

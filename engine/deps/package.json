@@ -1,0 +1,11 @@
+{
+  "name": "design-kit-cache",
+  "private": true,
+  "description": "The kit's pinned tools, installed by tools/setup.sh into the cache with npm ci. Change a version only at G10, with the self-test passing.",
+  "dependencies": {
+    "@fontsource/flow-block": "5.3.0",
+    "@fontsource/public-sans": "5.3.0",
+    "axe-core": "4.14.1",
+    "playwright": "1.65.1"
+  }
+}

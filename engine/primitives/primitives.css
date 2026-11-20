@@ -1,0 +1,12 @@
+/* Layout primitives (Every Layout). Layout only: no colour, no type, no borders, no shadows.
+   All visual identity lives in the project's tokens and partials. Variants (k-<primitive>-<variant>) are
+   defined in the project's partial CSS, never here. */
+.k-stack{display:flex;flex-direction:column;justify-content:flex-start;gap:var(--s-3,24px)}
+.k-stack>*,.k-switcher>*,.k-grid>*{min-width:0}
+.k-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(var(--k-grid-min,18rem),100%),1fr));gap:var(--s-3,24px)}
+.k-frame{aspect-ratio:var(--k-frame-ratio,16/9);overflow:hidden;display:flex;justify-content:center;align-items:center}
+.k-frame>img,.k-frame>video,.k-frame .k-figure img{inline-size:100%;block-size:100%;object-fit:cover}
+.k-cover{display:flex;flex-direction:column;min-block-size:var(--k-cover-min,80vh);padding:var(--s-3,24px)}
+.k-cover>.k-cover-centre{margin-block:auto}
+.k-switcher{display:flex;flex-wrap:wrap;gap:var(--s-3,24px)}
+.k-switcher>*{flex-grow:1;flex-basis:calc((var(--k-switch-at,40rem) - 100%) * 999)}

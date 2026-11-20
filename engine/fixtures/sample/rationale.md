@@ -1,0 +1,1 @@
+Problem: neighbours do not know what the branch offers. Insight: the reading room itself is the offer. Structure: a title page, then what is on, then the next step. Direction: plain public-service type with one green accent. Rejected: a stacked colour-band layout, because it repeated a past project.

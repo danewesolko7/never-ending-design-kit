@@ -1,0 +1,6 @@
+## 5. Generic patterns and repeats
+- Banned defaults, each reported with its location: hero + three icon cards + stats strip + numbered steps + testimonials + CTA band; numbered process cards, bento grids, logo walls, ghost words, eyebrows on every heading, tickers, count-up numbers; overused fonts (DM Sans, DM Mono, Inter, Playfair Display, Bebas Neue, Barlow Condensed, Syne, Space Grotesk, Share Tech Mono) unless the owner chose one; cream grounds, near-black with one neon accent, particles, glows, scanlines, noise, glitch text, custom cursors, gradient text, glassmorphism; invented stats, fake testimonials, filler. An exception justified by the content-to-form map is noted as accepted.
+- **Swap test:** with another subject's name and logo, which sections would still work? Redesign those from the content's real-world form.
+- **Audience test:** every form is one the reader actually sees; no internal operations artefacts.
+- **Sameness:** read the studio registry (`studio/registry/fingerprints.jsonl`, checked by `tools/uniq.py`); mark each move as not used, or as the one named reuse. If fewer than four of page form, grid, hero, figure forms, number treatment, image treatment, type voices and closing differ from earlier projects, it is a repeat.
+- From S8: every interior page has its own signature idea, and no two share one.

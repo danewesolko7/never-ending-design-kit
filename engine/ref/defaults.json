@@ -1,0 +1,51 @@
+{
+ "_about": "Common tool and template defaults. uniq.py fails an option whose display face, accent or signature moves match one, so build one is checked even with no history. Names are generic; add entries at G10.",
+ "faces": [
+  "Inter",
+  "Roboto",
+  "Open Sans",
+  "Poppins",
+  "Montserrat",
+  "Lato",
+  "Geist",
+  "DM Sans",
+  "Plus Jakarta Sans",
+  "Manrope",
+  "Space Grotesk",
+  "Nunito",
+  "Raleway",
+  "Outfit",
+  "Arial",
+  "Helvetica",
+  "system-ui"
+ ],
+ "accents": [
+  "#6366f1",
+  "#4f46e5",
+  "#8b5cf6",
+  "#7c3aed",
+  "#a855f7",
+  "#3b82f6",
+  "#2563eb",
+  "#06b6d4",
+  "#10b981",
+  "#ec4899"
+ ],
+ "accent_delta_e": 6,
+ "moves": [
+  "gradient hero",
+  "purple gradient",
+  "glassmorphism cards",
+  "bento grid",
+  "card grid",
+  "feature cards with icons",
+  "centred hero with two buttons",
+  "split hero",
+  "testimonial carousel",
+  "logo wall",
+  "stat strip",
+  "numbered step cards",
+  "floating blobs",
+  "neon glow"
+ ]
+}

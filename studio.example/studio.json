@@ -1,0 +1,6 @@
+{
+ "_about": "This studio's overlay. identifiers: names that must never appear in engine/ (kitcheck.sh fails on them): people, clients, project ids, client phrases. Leave out common words.",
+ "studio": "",
+ "creative_director": "",
+ "identifiers": []
+}

@@ -1,0 +1,2 @@
+## 5. Choosing a chart by message (FT Visual Vocabulary, Flourish)
+Change over time: line, fan or small multiples. Magnitude: bar, lollipop or unit chart. Part-to-whole: stacked bar or waffle. Ranking: ordered bar or slope. Distribution: beeswarm, histogram or dot strip. Correlation: scatter. Deviation: diverging bar. Spatial: proportional symbols for totals, choropleth for rates. Flow: Sankey or tiered flow diagram. Never add or stack amounts that measure different things.
