@@ -2,8 +2,8 @@
 # Cached install (one cache for the kit, $KIT_CACHE or ~/.cache/design-kit). The kit's own tools are pinned in
 # deps/package-lock.json and installed with npm ci whenever the lock changes: axe-core, playwright and its Chromium,
 # the greeking face. The current project's Fontsource faces (tokens*.json type.faces[].source = "fontsource:<package>",
-# including each direction card's tokens-d<n>.json) are added on top without changing the lock. Python needs
-# requirements.txt (Pillow). Later sessions reuse the cache. Prints one line.
+# including each direction card's tokens-d<n>.json) are added on top without changing the lock. Python needs only
+# its standard library. Later sessions reuse the cache. Prints one line.
 K="$(cd "$(dirname "$0")/.." && pwd)"; cd "$K"
 H="${KIT_HOME:-$(cd .. && pwd)}"
 C="${KIT_CACHE:-$HOME/.cache/design-kit}"; mkdir -p "$C"
@@ -38,5 +38,4 @@ NODE_PATH="$C/node_modules" node -e "process.exit(require('fs').existsSync(requi
 # the pinned Chromium also drives impeccable's detector (IMPECCABLE_BROWSER), so every machine scans with one browser
 NODE_PATH="$C/node_modules" node -e "process.stdout.write(require('playwright').chromium.executablePath())" > "$H/.chromium" 2>/dev/null
 [ -x "$C/node_modules/.bin/impeccable" ] || { echo "setup: impeccable is missing from the cache (rerun after deleting $C/package-lock.json)"; exit 1; }
-python3 -c "import PIL" 2>/dev/null || { echo "setup: Pillow is missing (python3 -m pip install -r $K/requirements.txt)"; exit 1; }
 echo "setup: cache ready (${did:- reused;} $(echo $fonts | wc -w | tr -d ' ') project face(s))"

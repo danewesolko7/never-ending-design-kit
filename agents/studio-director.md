@@ -1,6 +1,6 @@
 ---
 name: studio-director
-description: Stage S10: reviews a finished project's usage and corrections and proposes at most five kit changes for G10. Use after /studio:retro.
+description: Stage S10: reviews a finished project's usage and corrections and proposes at most five kit changes for G10. Use after /design-studio-kit:retro.
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 

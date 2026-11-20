@@ -29,7 +29,7 @@ for f in studio.json taste.md taste-checks.md library.md registry/fingerprints.j
   [ -f "$H/studio/$f" ] || say MISSING "studio/$f (copy it from studio.example/)"; done
 [ -f "$H/studio/taste-checks.md" ] && { n=$(wc -w < "$H/studio/taste-checks.md"); [ "$n" -le 150 ] || say LONG "studio/taste-checks.md is $n words (cap 150)"; }
 [ -d fixtures/sample ] || say MISSING fixtures/sample
-for f in adapters/claude-code.md adapters/claude-ai-project.md adapters/other-agents.md deps/package-lock.json requirements.txt; do
+for f in adapters/claude-code.md adapters/claude-ai-project.md adapters/other-agents.md deps/package-lock.json; do
   [ -f "$f" ] || say MISSING "$f"; done
 # the plugin: manifest and hooks parse, every stage agent and command exists and is named for its file, the launcher runs
 for f in ../.claude-plugin/plugin.json ../.claude-plugin/marketplace.json ../hooks/hooks.json; do

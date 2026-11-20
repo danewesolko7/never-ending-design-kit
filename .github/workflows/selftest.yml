@@ -17,7 +17,6 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - run: python3 -m pip install -r engine/requirements.txt
       - name: Kit cache (axe-core, playwright, Chromium, fonts)
         run: bash engine/tools/setup.sh
       - name: Chromium system libraries (Linux)

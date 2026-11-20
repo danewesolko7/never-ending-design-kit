@@ -3,6 +3,6 @@
   "description": "The never-ending design kit as a Claude Code plugin.",
   "owner": { "name": "Dane Wesolko" },
   "plugins": [
-    { "name": "studio", "source": "./", "description": "An agentic design studio for websites, gated by a creative director." }
+    { "name": "design-studio-kit", "source": "./", "description": "An agentic design studio for websites, gated by a creative director." }
   ]
 }

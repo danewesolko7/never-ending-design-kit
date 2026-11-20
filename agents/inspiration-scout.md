@@ -1,6 +1,6 @@
 ---
 name: inspiration-scout
-description: Runs one inspiration sweep (A subject, B structure, C aesthetic) for a studio project. It reads the technique libraries first, searches the web only for what they lack, opens every page it cites, and records one technique per reference in references.jsonl. Use before stages 1, 3 and 4, or with /studio:sweep.
+description: Runs one inspiration sweep (A subject, B structure, C aesthetic) for a studio project. It reads the technique libraries first, searches the web only for what they lack, opens every page it cites, and records one technique per reference in references.jsonl. Use before stages 1, 3 and 4, or with /design-studio-kit:sweep.
 tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 ---
 

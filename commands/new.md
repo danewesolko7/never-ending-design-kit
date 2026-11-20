@@ -13,5 +13,5 @@ questions, so it is never delegated).
 3. Follow `prompts/S0.md`: one AskUserQuestion round, then `brief.json` and `brief.md` in the project folder.
 4. Write the hand-off to `docs/stages/0.md` (template in `prompts/templates.md`) and run
    `KIT_PROJECT=$ARGUMENTS studio gate --ready`.
-5. Show the creative director the packet it printed and STOP. They answer with `/studio:decide G0 approve` (or
-   `fixes "..."`), then `/studio:next` continues.
+5. Show the creative director the packet it printed and STOP. They answer with `/design-studio-kit:decide G0 approve` (or
+   `fixes "..."`), then `/design-studio-kit:next` continues.

@@ -3,7 +3,7 @@
 
 [tools]
 kitlib.py start.sh gate.py pass.py build.py seed.py uniq.py fontcheck.py greek.py shot.js probe.js
-contact.py milestone.py checkpoint.py pack.py refs.py hook.py setup.sh kitcheck.sh selftest.sh
+contact.py contact.js milestone.py checkpoint.py pack.py refs.py hook.py setup.sh kitcheck.sh selftest.sh
 policy.py comply.py comply.js tells.py designmd.py
 
 [changes]
@@ -30,3 +30,6 @@ policy.py comply.py comply.js tells.py designmd.py
   from ui-ux-pro-max and awesome-claude-design, named generically). tools/designmd.py exports the nine-section
   DESIGN.md; studio browse drives the Playwright agent CLI. Base CSS wraps long words; the consent banner keeps room
   for itself so focus never hides under it. img2threejs documented as an optional per-project add-on.
+2026-11-19 (CD): plugin renamed studio -> design-studio-kit (commands are /design-studio-kit:*); adapter updated.
+2026-11-19 (CD): no Pillow. contact.py draws its sheet through tools/contact.js (Chromium canvas, pinned
+  playwright); the self-test draws its fixture photo the same way. requirements.txt removed: Python is standard library only.

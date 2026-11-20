@@ -13,7 +13,7 @@ stage agents do the work. Pass the project name to every agent and set `KIT_PROJ
 
 | Stage | Who runs it |
 |---|---|
-| 0 | You, as in `/studio:new` (S0 asks the CD questions) |
+| 0 | You, as in `/design-studio-kit:new` (S0 asks the CD questions) |
 | 1 | `inspiration-scout` (sweep A), then `researcher` |
 | 2 | `content-strategist` |
 | 3 | `inspiration-scout` (sweep B), then `layout-designer` once per concept, in parallel: c1, c2, c3 (lean mode: one run, no option named) |
@@ -24,7 +24,7 @@ stage agents do the work. Pass the project name to every agent and set `KIT_PROJ
 | 7 | `systems-designer` |
 | 8 | `copywriter` for the batch's pages (text only), then `production-designer` for the batch |
 | 9 | Nothing to run: packaging ran at the last G8 approval. Publish the package (step 4) |
-| 10 | `studio-director` (after `/studio:retro`) |
+| 10 | `studio-director` (after `/design-studio-kit:retro`) |
 
 3. For stages 3 and 4 run in parallel, you close the stage once all agents return: check each option's uniq.py result
    (a failing option is revised once by its agent), run `studio tool pass.py --rough` (stage 3), write the hand-off
@@ -33,4 +33,4 @@ stage agents do the work. Pass the project name to every agent and set `KIT_PROJ
    `studio tool milestone.py <gate>`, and publish the canvas as the engine's `adapters/claude-code.md` says. At G7, after
    approval, publish the Design System; at stage 9, publish `out/package/`.
 5. Show the creative director the packet (`out/packet.md`), the canvas link if any, and every check an agent did not
-   run. STOP. Never record a decision yourself: the CD answers with `/studio:decide`.
+   run. STOP. Never record a decision yourself: the CD answers with `/design-studio-kit:decide`.
