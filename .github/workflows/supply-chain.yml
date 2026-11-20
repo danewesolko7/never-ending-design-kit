@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: npm audit (pinned kit tools)
@@ -25,7 +25,7 @@ jobs:
         working-directory: engine/deps
         # the cache manifest has no version of its own; give the CI copy one so npm can name the root component
         run: npm pkg set version=0.0.0 && npm sbom --sbom-format cyclonedx --package-lock-only > ../../sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: sbom
