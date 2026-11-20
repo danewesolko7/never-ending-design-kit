@@ -40,6 +40,14 @@ The kit is the single source. Read in every session after P0. Precedence: CD > r
 - No third-party brand marks and no imitation of real brands.
 - Showcase graphics (boards, posts, case studies) show each screenshot at the full width of its frame; crop the bottom only.
 
+## Compliance
+- Every page the brief's markets require exists, covers its topics in plain words, and is linked from the footer of every page (comply.py). Policy pages are drafts until a lawyer approves them; never mark legal_review done.
+- Nothing outside "necessary" runs before a choice: one kit consent banner, reject beside accept with the same look, no ticked boxes, choices reopen from the footer, GPC honoured.
+- Every outside host is declared with its purpose; self-host fonts, images and scripts wherever possible.
+- A form that collects personal data says why, links the privacy page, and ticks nothing in advance.
+- Accessibility claims never exceed what was tested: automated passes are evidence, not conformance.
+
 ## Code
 - Semantic HTML in landmark and heading order, one CSS file from tokens plus partials, no inline styles, class names prefixed by component (k-, or the partial's own prefix). pass.py checks it.
+- Scripts are files: no inline code, event handler attributes or javascript: links, so a strict Content Security Policy holds. CSS uses logical properties (inline, block) so right-to-left needs no new CSS.
 - Base list components are block by default; flex or grid rows are opt-in modifiers.

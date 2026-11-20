@@ -1,0 +1,2 @@
+## 4. Reduced motion (every stage that moves anything)
+Reduced motion means fewer and gentler changes, not a dead page. Under prefers-reduced-motion keep opacity and colour changes that explain a state, drop movement, scale and scroll-linked effects, and show every moment at its final, readable state. Nothing stays hidden waiting for an animation. Anything moving for more than five seconds has a pause button (WCAG 2.2.2). tokens.json motion.reduced names the fallback; pass.py checks that nothing still runs under reduced motion.

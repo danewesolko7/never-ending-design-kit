@@ -129,6 +129,16 @@ Take the page form from something the subject makes for itself.
 | Redaction that lifts on hover or scroll | orwell.byholm.co | reveal of hidden information |
 | A newswire ticker across the top | Forensic Architecture | live activity, logs |
 | Sticky graphic with step swap; progress-linked animation | newsroom scrollytelling | explainers |
+| Photo chapters: the section holds while three to five large photographs replace each other, one frame at a time | Taste Skill moments | places, products and services with a real story in pictures |
+| A picture develops once as it comes on screen (from pale to full tone), never on every image | Taste Skill moments | one photograph that carries the page |
+| Pinned steps: a section holds for two screens while its three steps open in turn | Taste Skill moments | a process the reader must follow |
+| A statement lights up word by word with the scroll, readable at rest at half ink (about 4:1) | Taste Skill moments | one sentence the page stands on |
+| Giant type with a photograph showing through the letters under an ink tint | Taste Skill moments | a two- to four-word claim on a statement screen |
+| Figures roll once like an odometer when the row arrives, right-most digit fastest, tabular figures | Taste Skill moments | two to four sourced figures |
+| A new section's colour grows from an inset panel to the full width as it arrives (an iris) | Taste Skill moments | a change of chapter or ground |
+| Press feedback: scale 0.97 on press with a 160ms strong ease-out; popovers grow from their trigger | Emil Kowalski, animation standards | every button and pressable card |
+| Entrances that start at 0.9 to 0.97 scale with opacity, never from nothing, staggered 30 to 80ms | Emil Kowalski, animation standards | a group arriving together |
+| A procedural 3D object rebuilt from one reference image as code (no model file), with a still fallback | img2threejs | a direction that is 3D by brief, within the page-weight budget |
 
 ## 8. Data and explanation
 
@@ -206,7 +216,12 @@ Systems that encode meaning with marks; good sources for signature moves.
 - Stock photos showing other companies' logos, number plates or the wrong country's streets.
 - Stock "cyber" imagery: hooded figures, code rain, padlocks on circuit boards, glowing globes.
 - Invented reviews, frequencies, rebates or accuracy claims ("100% accurate", "zero false positives").
-- AI-default patterns: see the Impeccable slop catalogue (impeccable.style/slop).
+- AI-default patterns: see the Impeccable slop catalogue (impeccable.style/slop); pass.py now runs its detector.
+- Machine-written copy: stand-in words (seamless, unlock, elevate), stock lines, "not X but Y" frames, strips of round
+  proof figures, the same eyebrow over every heading, the default cast of invented names (tools/tells.py).
+- Motion that slows the interface: anything animated on an action repeated all day, ease-in on interface motion,
+  transitions on "all" or on layout properties, entrances from scale(0), interface transitions over 300ms.
+- A fade-in on every section, parallax on text, scroll-jacking.
 
 ## 13. Links for the references above
 
@@ -215,6 +230,11 @@ Systems that encode meaning with marks; good sources for signature moves.
 | Every Layout | https://every-layout.dev/layouts | Layout primitives (stack, cover, frame, imposter) |
 | Edward Tufte, sparklines | https://www.edwardtufte.com/notebook/sparkline-theory-and-practice-edward-tufte/ | Word-sized graphics inside sentences |
 | Impeccable slop catalogue | https://impeccable.style/slop | AI-default patterns to avoid |
+| Taste Skill (Leonxlnx) | https://github.com/Leonxlnx/taste-skill | Dealt "moments" (photo chapters, pinned steps, a statement lighting up) and copy tells |
+| Emil Kowalski, skills | https://github.com/emilkowalski/skills | Animation standards (easing, duration, physicality) and worst-case data |
+| img2threejs | https://img2threejs.io/ | One image rebuilt as a procedural Three.js object |
+| ui-ux-pro-max | https://github.com/nextlevelbuilder/ui-ux-pro-max-skill | Common font pairings and palettes (kept as defaults to avoid) and UX guidelines |
+| awesome-claude-design | https://github.com/VoltAgent/awesome-claude-design | The nine-section DESIGN.md format |
 | USAFacts, The Big Picture | https://www.usafacts.org/the-big-picture | Source line directly under each chart title |
 | USAspending Data Lab, America's Finance Guide (archived) | https://webarchive.library.unt.edu/web/20201218091140/https://datalab.usaspending.gov/americas-finance-guide/spending | Dot = $1 billion unit; totals converted to per-person amounts |
 | Washington Post unit chart, via FlowingData | https://flowingdata.com/2022/05/18/behind-the-million | One mark per unit shows scale; emphasis on round-number milestones |

@@ -19,7 +19,10 @@ fs.mkdirSync(out, { recursive: true });
   // TLS with its own CA, so certificate errors are ignored for captures only. Local files never use the proxy.
   const remote = /^https?:/.test(url); const px = process.env.HTTPS_PROXY || process.env.https_proxy;
   const b = await chromium.launch(remote && px ? { proxy: { server: px } } : {}); const made = [];
-  const ctx = (o) => b.newContext({ ...o, ignoreHTTPSErrors: !!(remote && px) });
+  // Local pages: a stored consent choice (nothing allowed) keeps the consent banner off the captures; comply.py tests it.
+  const ctx = async (o) => { const c = await b.newContext({ ...o, ignoreHTTPSErrors: !!(remote && px) });
+    if (!remote) await c.addInitScript(() => { try { if (!localStorage.getItem('k-consent')) localStorage.setItem('k-consent', JSON.stringify({ v: 1, time: '', gpc: false })); } catch (e) { } });
+    return c; };
   for (const w of widths) {
     const p = await (await ctx({ viewport: { width: w, height: SCREEN }, reducedMotion: 'reduce' })).newPage();
     let err = ''; const r = await p.goto(url, { waitUntil: 'load', timeout: 45000 }).catch(e => { err = String(e); return null; });

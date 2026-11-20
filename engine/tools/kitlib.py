@@ -125,7 +125,11 @@ class Out:
 def node_env():
     """Environment for node tools: the setup cache (axe-core, fonts) plus the workspace's playwright."""
     nm = os.environ.get('KIT_NODE') or (open(R('.node')).read().strip() if os.path.exists(R('.node')) else J('tools', 'node_modules'))
-    env = {**os.environ, 'KIT_NODE': nm}
+    env = {**os.environ, 'KIT_NODE': nm,
+           # impeccable (pass.py slop): detector only, no usage data, its engine cache inside the kit cache
+           'DO_NOT_TRACK': '1', 'IMPECCABLE_NO_TELEMETRY': '1', 'IMPECCABLE_HOME': os.path.join(os.path.dirname(nm), 'impeccable')}
+    if os.path.exists(R('.chromium')):
+        env['IMPECCABLE_BROWSER'] = open(R('.chromium')).read().strip()
     env['NODE_PATH'] = ':'.join(x for x in (nm, os.environ.get('NODE_PATH', ''), '/opt/npm-tools/node_modules',
                                             os.path.expanduser('~/.npm-global/lib/node_modules')) if x)
     return env

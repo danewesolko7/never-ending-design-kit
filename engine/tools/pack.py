@@ -15,7 +15,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from kitlib import J, R, ST, die, write_atomic
 
 KIT_PARTS = ('engine/', 'studio.example/', '.claude-plugin/', 'agents/', 'commands/', 'skills/', 'hooks/', 'bin/',
-             'README.md', 'NOTICE', 'LICENSE', 'LICENSE-CONTENT', '.gitignore')
+             'README.md', 'NOTICE', 'LICENSE', 'LICENSE-CONTENT', '.gitignore', 'SECURITY.md', 'CONTRIBUTING.md',
+             'CODE_OF_CONDUCT.md')
 ENGINE_SKIP = ('engine/out/', 'engine/tools/node_modules', 'engine/deps/node_modules')
 STUDIO_SKIP = ('registry/thumbs/', 'registry/library/')
 IMAGE_EXT = ('.png', '.jpg', '.jpeg', '.webp', '.gif', '.avif')

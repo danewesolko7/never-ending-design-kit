@@ -13,11 +13,19 @@ Page JSON: {id, title, meta{title, description, og_image}, sections[{id, primiti
            text{<field>: string | [strings]}, images[<slot>]}]}
 Text fields by name: h1 h2 h3 kicker lede body|p* caption quote list* link* ("Label | href"). Fields render in
 order inside a primitive; a partial places them itself with {{field}} (escaped text), {{field|el}} (the element),
-{{img:<slot>}}, {{list:<field>}}, and on chrome partials {{site}} and {{nav}}.
+{{img:<slot>}}, {{list:<field>}}, and on chrome partials {{site}}, {{nav}} and (footer) {{legal}}.
+
+Compliance (tools/policy.py, brief.json compliance{}): legal pages (privacy, accessibility, imprint ...) leave the
+main nav and are listed in the footer's legal nav ({{legal}}), with a cookie-settings button when consent is on.
+Consent on (a third party outside "necessary"): the banner, consent.js and consent.css ship with the site. --all also
+writes robots.txt, sitemap.xml, .well-known/security.txt and _headers (CSP and security headers) into the site.
+Head: canonical link (site_url), favicon (images/favicon.svg|.png|.ico), referrer policy, noindex on exempt pages,
+dir="rtl" for right-to-left languages.
 """
 import glob, html, json, os, re, shutil, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from kitlib import J, P, current_project, die, event, node_env, read_json, write_atomic
+import policy
 
 PRIMS = {os.path.basename(f)[:-5] for f in glob.glob(J('primitives', '*.html'))}
 E = lambda s: html.escape(str(s), quote=True)
@@ -111,6 +119,7 @@ html{-webkit-text-size-adjust:100%}
 .k-body :where(h1,h2,h3,h4,p,ul,ol,figure,blockquote){margin:0}
 .k-body :where(p,li,dd,figcaption,blockquote){text-wrap:pretty;text-align:left}
 .k-body :where(h1,h2,h3,h4){text-wrap:balance}
+.k-body :where(h1,h2,h3,h4,p,li,dd,dt,a,figcaption,blockquote,label,button){overflow-wrap:anywhere}
 .k-skip{position:absolute;left:-9999px;top:auto}
 .k-skip:focus{left:16px;top:16px;z-index:10;display:inline-flex;align-items:center;min-height:44px;padding:0 16px;background:var(--c-paper,Canvas);color:var(--c-ink,CanvasText)}
 :focus-visible{outline:3px solid var(--c-focus,currentColor);outline-offset:3px}
@@ -225,13 +234,83 @@ def nav_html(pages, current):
 def chrome(name, ctx):
     f = P('partials', f'{name}.html')
     if os.path.exists(f):
-        return re.sub(r'\{\{(site|nav|year|home)\}\}', lambda m: ctx[m.group(1)], open(f, encoding='utf-8').read())
+        return re.sub(r'\{\{(site|nav|year|home|legal)\}\}', lambda m: ctx[m.group(1)], open(f, encoding='utf-8').read())
     if name == 'header':
         return f'<header class="k-header"><a class="k-brand" href="{ctx["home"]}">{E(ctx["site_raw"])}</a>{ctx["nav"]}</header>'
-    return f'<footer class="k-footer"><p class="k-footname">{E(ctx["site_raw"])}</p></footer>'
+    return f'<footer class="k-footer"><p class="k-footname">{E(ctx["site_raw"])}</p>{ctx["legal"]}</footer>'
 
 
-def build_page(pj, pages, brief, briefs, site):
+# ---------- compliance: legal footer and consent ----------
+def consent_text(brief):
+    t = read_json(J('primitives', 'consent.json'), {})
+    own = (brief.get('compliance') or {}).get('consent_text') or {}
+    cats = {**t.get('categories', {}), **(own.get('categories') or {})}
+    return {**t, **{k: v for k, v in own.items() if k != 'categories'}, 'categories': cats}
+
+
+def legal_html(legal, current, brief):
+    if not legal and not policy.consent_on(brief):
+        return ''
+    lis = ''.join(f'<li><a href="{p["id"]}.html"' + (' aria-current="page"' if p['id'] == current else '') + f'>{E(p.get("nav") or p["title"])}</a></li>'
+                  for p in legal)
+    if policy.consent_on(brief):
+        lis += f'<li class="k-consent-li" hidden><button class="k-consent-open" type="button" data-consent-open>{E(consent_text(brief)["settings"])}</button></li>'
+    return f'<nav class="k-legal" aria-label="Legal"><ul class="k-footlinks">{lis}</ul></nav>'
+
+
+def consent_html(brief):
+    t = consent_text(brief)
+    used = [c for c in policy.CATEGORIES[1:] if c in {x.get('category') for x in policy.third_parties(brief)}]
+    boxes = ''.join(f'<p class="k-consent-cat"><input class="k-consent-box" type="checkbox" id="k-cat-{c}" data-cat="{c}">'
+                    f'<label class="k-consent-label" for="k-cat-{c}">{E(t["categories"].get(c, {}).get("label", c))}</label>'
+                    f'<span class="k-consent-desc">{E(t["categories"].get(c, {}).get("desc", ""))}</span></p>' for c in used)
+    cookies = policy.page_id(brief, 'cookies')
+    return (f'<div class="k-consent" id="k-consent" role="region" aria-labelledby="k-consent-title" hidden><div class="k-consent-inner">'
+            f'<h2 class="k-consent-title" id="k-consent-title">{E(t["title"])}</h2>'
+            f'<p class="k-consent-body">{E(t["body"])} <a href="{E(cookies)}.html">{E(t["policy"])}</a></p>'
+            f'<p class="k-consent-gpc" data-consent-gpc hidden>{E(t["gpc"])}</p>'
+            f'<fieldset class="k-consent-cats" data-consent-cats hidden><legend class="k-consent-legend">{E(t["legend"])}</legend>{boxes}</fieldset>'
+            f'<div class="k-consent-actions"><button class="k-consent-btn" type="button" data-consent-act="reject">{E(t["reject"])}</button>'
+            f'<button class="k-consent-btn" type="button" data-consent-act="accept">{E(t["accept"])}</button>'
+            f'<button class="k-consent-btn" type="button" data-consent-act="choose" aria-expanded="false">{E(t["choose"])}</button>'
+            f'<button class="k-consent-btn" type="button" data-consent-act="save" hidden>{E(t["save"])}</button></div></div></div>\n')
+
+
+ICONS = (('favicon.svg', 'image/svg+xml'), ('favicon.png', 'image/png'), ('favicon.ico', 'image/x-icon'))
+
+
+def icon_html(site):
+    out = ''
+    for fn, ty in ICONS:
+        if os.path.exists(P('images', fn)):
+            shutil.copy(P('images', fn), os.path.join(site, fn))
+            out += f'<link rel="icon" href="{fn}" type="{ty}">\n'
+    if os.path.exists(P('images', 'apple-touch-icon.png')):
+        shutil.copy(P('images', 'apple-touch-icon.png'), os.path.join(site, 'apple-touch-icon.png'))
+        out += '<link rel="apple-touch-icon" href="apple-touch-icon.png">\n'
+    return out
+
+
+def site_files(site, brief, ids):
+    """robots.txt, sitemap.xml, .well-known/security.txt and _headers, from the brief (tools/policy.py)."""
+    url = policy.site_url(brief)
+    exempt = set(read_json(J('settings.json')).get('reach_exempt') or [])
+    if url:
+        write_atomic(os.path.join(site, 'robots.txt'), f'User-agent: *\nAllow: /\n\nSitemap: {url}/sitemap.xml\n')
+        locs = ''.join(f'<url><loc>{E(url)}/{E(i)}.html</loc></url>\n' for i in ids if i not in exempt)
+        write_atomic(os.path.join(site, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n'
+                     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + locs + '</urlset>\n')
+    sec = policy.security_txt(brief)
+    if sec:
+        write_atomic(os.path.join(site, '.well-known', 'security.txt'), sec)
+    write_atomic(os.path.join(site, '_headers'), policy.header_files(brief)['_headers'])
+    if policy.consent_on(brief):
+        shutil.copy(J('primitives', 'consent.js'), os.path.join(site, 'consent.js'))
+    elif os.path.exists(os.path.join(site, 'consent.js')):
+        os.remove(os.path.join(site, 'consent.js'))
+
+
+def build_page(pj, pages, brief, briefs, site, legal=()):
     IMG_N['n'] = 0
     pid = pj.get('id') or err('page JSON has no id') or 'page'
     for k in ('title', 'sections'):
@@ -239,7 +318,7 @@ def build_page(pj, pages, brief, briefs, site):
             err(f'pages/{pid}.json: missing "{k}"')
     meta = pj.get('meta') or {}
     ctx = {'site': E(site_name(brief)), 'site_raw': site_name(brief), 'nav': nav_html(pages, pid), 'year': '2026',
-           'home': (pages[0]['id'] if pages else pid) + '.html'}
+           'home': (pages[0]['id'] if pages else pid) + '.html', 'legal': legal_html(legal, pid, brief)}
     body = []
     for sec in pj.get('sections', []):
         sid = sec.get('id') or err(f'pages/{pid}.json: a section has no id') or 'x'
@@ -264,11 +343,19 @@ def build_page(pj, pages, brief, briefs, site):
     og = meta.get('og_image') or 'images/og.png'
     if os.path.exists(P(og)) and not os.path.exists(os.path.join(site, og)):   # the sharing image ships with the site
         os.makedirs(os.path.dirname(os.path.join(site, og)), exist_ok=True); shutil.copy(P(og), os.path.join(site, og))
-    head = (f'<!doctype html>\n<html lang="{E(lang)}">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+    exempt = pid in set(read_json(J('settings.json')).get('reach_exempt') or [])
+    url = policy.site_url(brief)
+    dir_ = ' dir="rtl"' if policy.text_dir(brief) == 'rtl' else ''
+    extra = ('<meta name="robots" content="noindex">\n' if exempt else (f'<link rel="canonical" href="{E(url)}/{E(pid)}.html">\n' if url else ''))
+    extra += '<meta name="referrer" content="strict-origin-when-cross-origin">\n' + icon_html(site)
+    consent = policy.consent_on(brief)
+    head = (f'<!doctype html>\n<html lang="{E(lang)}"{dir_}>\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f'<title>{E(title)}</title>\n<meta name="description" content="{E(meta.get("description", ""))}">\n'
             f'<meta property="og:title" content="{E(title)}">\n<meta property="og:description" content="{E(meta.get("description", ""))}">\n'
-            f'<meta property="og:image" content="{E(og)}">\n<link rel="stylesheet" href="site.css">\n</head>\n')
-    page = (head + '<body class="k-body">\n<a class="k-skip" href="#main">Skip to main content</a>\n' + chrome('header', ctx) + '\n<main id="main">\n'
+            f'<meta property="og:image" content="{E(og)}">\n' + extra + '<link rel="stylesheet" href="site.css">\n'
+            + ('<script src="consent.js" defer></script>\n' if consent else '') + '</head>\n')
+    page = (head + '<body class="k-body">\n<a class="k-skip" href="#main">Skip to main content</a>\n' + (consent_html(brief) if consent else '')
+            + chrome('header', ctx) + '\n<main id="main">\n'
             + '\n'.join(body) + '\n</main>\n' + chrome('footer', ctx) + '\n</body>\n</html>\n')
     return pid, page
 
@@ -302,15 +389,20 @@ def main(a):
             die(f'build: schema error: {os.path.relpath(f, P())} is not valid JSON ({e})')
     content = read_json(P('content.json'), {})
     order = [p['id'] for p in content.get('pages', [])]
-    pages = [{'id': p['id'], 'title': p.get('title', p['id']), 'nav': p.get('nav')} for p in pjs if p.get('id') != 'specimen' and p.get('nav', True) is not False]
+    lids = policy.legal_ids(brief)
+    pages = [{'id': p['id'], 'title': p.get('title', p['id']), 'nav': p.get('nav')} for p in pjs
+             if p.get('id') != 'specimen' and p.get('nav', True) is not False and p.get('id') not in lids and not p.get('legal')]
     pages.sort(key=lambda p: order.index(p['id']) if p['id'] in order else 99)
+    legal = [{'id': p['id'], 'title': p.get('title', p['id']), 'nav': p.get('nav') if isinstance(p.get('nav'), str) else None}
+             for p in pjs if p.get('id') in lids or p.get('legal')]
+    legal.sort(key=lambda p: lids.index(p['id']) if p['id'] in lids else 99)
     want = [p.get('id') for p in pjs] if a[0] == '--all' else [a[0]]
     fonts, root, roles = tokens_css(tok, site)
     built = []
     for pj in pjs:
         if pj.get('id') not in want:
             continue
-        pid, page = build_page(pj, pages, brief, briefs, site)
+        pid, page = build_page(pj, pages, brief, briefs, site, legal)
         built.append((pid, page))
     if a[0] != '--all' and not built:
         die(f'build: no pages/{a[0]}.json')
@@ -320,6 +412,8 @@ def main(a):
         return 1
     parts = ['/* site.css: generated by tools/build.py from tokens.json, kit primitives and the project partials. Do not edit. */',
              root] + fonts + [BASE] + roles + [open(J('primitives', 'primitives.css'), encoding='utf-8').read()]
+    if policy.consent_on(brief):
+        parts.append(open(J('primitives', 'consent.css'), encoding='utf-8').read())
     for f in [P('partials', 'header.css'), P('partials', 'footer.css')] + sorted(x for x in glob.glob(P('partials', '*.css'))
                                                                                  if os.path.basename(x) not in ('header.css', 'footer.css')):
         if os.path.exists(f):
@@ -327,6 +421,11 @@ def main(a):
     write_atomic(os.path.join(site, 'site.css'), '\n'.join(parts) + '\n')
     for pid, page in built:
         write_atomic(os.path.join(site, f'{pid}.html'), page)
+    if a[0] == '--all' and not board:
+        for f in glob.glob(os.path.join(site, '*.html')):   # a page whose JSON is gone leaves the site too
+            if os.path.basename(f)[:-5] not in {p for p, _ in built}:
+                os.remove(f)
+        site_files(site, brief, [p.get('id') for p in pjs if p.get('id') != 'specimen'])
     print(f'build: {len(built)} page(s) -> {os.path.relpath(site, P())}/ ({", ".join(p for p, _ in built)}) + site.css')
     return 0
 

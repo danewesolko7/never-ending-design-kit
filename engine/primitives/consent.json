@@ -1,0 +1,18 @@
+{
+ "_about": "Default consent banner wording (English, plain). A project replaces any field in brief.json compliance.consent_text; the copywriter (S5) writes it in the site's language. Reject and accept must stay equally plain.",
+ "title": "Cookie choices",
+ "body": "We would like to use the tools below. Nothing beyond what the site needs to work runs until you choose, and you can change your mind at any time from the link at the foot of every page.",
+ "policy": "Read the cookie policy",
+ "accept": "Accept all",
+ "reject": "Reject all",
+ "choose": "Choose",
+ "save": "Save choices",
+ "settings": "Cookie settings",
+ "legend": "Choose what to allow",
+ "gpc": "Your browser sent a Global Privacy Control signal, so advertising and data sharing stay off.",
+ "categories": {
+  "analytics": {"label": "Measurement", "desc": "Counts visits so we can see which pages help."},
+  "marketing": {"label": "Advertising and sharing", "desc": "Lets advertising partners show and measure ads. In some places this counts as selling or sharing data."},
+  "media": {"label": "Embedded media", "desc": "Loads videos and maps from other sites, which can set their own cookies."}
+ }
+}

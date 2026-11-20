@@ -1,0 +1,22 @@
+/* Consent banner (kit primitive): added to site.css only when the brief declares tracking. Colours and type come
+   from the project's tokens; the fallbacks are system colours. Reject and accept share one class, so they always
+   look the same. A region, not a modal: the page stays usable while the choice waits. */
+.k-consent{position:fixed;inset-inline:0;inset-block-end:0;z-index:20;max-block-size:85vh;overflow:auto;background:var(--c-paper,Canvas);color:var(--c-ink,CanvasText);border-block-start:3px solid var(--c-ink,CanvasText)}
+.k-consent[hidden],.k-consent [hidden],.k-consent-li[hidden]{display:none}
+.k-consent-on{scroll-padding-block-end:var(--k-consent-h,50vh)}
+.k-consent-on body{padding-block-end:var(--k-consent-h,50vh)}
+.k-consent-inner{max-inline-size:72rem;margin-inline:auto;padding:var(--s-3,24px) var(--s-4,32px);display:flex;flex-direction:column;gap:var(--s-2,16px)}
+.k-consent-title{font-size:var(--t-3,24px);line-height:1.2}
+.k-consent-title:focus{outline:none}
+.k-consent-title:focus-visible{outline:3px solid var(--c-focus,currentColor);outline-offset:3px}
+.k-consent-cats{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s-1,8px)}
+.k-consent-legend{font-weight:700;padding:0;margin-block-end:var(--s-1,8px)}
+.k-consent-cat{display:flex;flex-wrap:wrap;align-items:center;gap:0 var(--s-2,16px)}
+.k-consent-box{inline-size:24px;block-size:24px;margin:0;accent-color:var(--c-ink,CanvasText)}
+.k-consent-label{display:inline-flex;align-items:center;min-block-size:44px;font-weight:700}
+.k-consent-desc{flex-basis:100%;padding-inline-start:40px}
+.k-consent-actions{display:flex;flex-wrap:wrap;gap:var(--s-2,16px)}
+.k-consent-btn{font:inherit;display:inline-flex;align-items:center;justify-content:center;min-block-size:44px;min-inline-size:10rem;padding:0 var(--s-3,24px);border:2px solid currentColor;border-radius:var(--r-2,0);background:var(--c-paper,Canvas);color:var(--c-ink,CanvasText);cursor:pointer}
+.k-consent-btn:hover{text-decoration:underline;text-underline-offset:4px}
+.k-consent-open{font:inherit;display:inline-flex;align-items:center;min-block-size:44px;min-inline-size:44px;padding:0;border:0;background:none;color:inherit;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+@media (forced-colors:active){.k-consent{border-block-start-color:CanvasText}.k-consent-btn{border-color:ButtonText}}

@@ -1,0 +1,2 @@
+## Motion
+Motion explains, confirms or keeps the reader's place; it never decorates something seen all day. The standards here are distilled from Emil Kowalski's animation skills and Taste Skill's dealt moments (both MIT, credited in NOTICE), in the kit's own words. pass.py --system enforces the measurable part (no transition on "all", no animated layout properties, no scale(0), no ease-in on interface motion, interface transitions at 500ms or less) and pass.py checks reduced motion and pause controls on every page.

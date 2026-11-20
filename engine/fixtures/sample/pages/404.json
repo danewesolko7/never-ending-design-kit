@@ -1,0 +1,2 @@
+{"id": "404", "title": "Page not found", "nav": false, "meta": {"title": "Page not found | Larch Street Library", "description": "This page has moved or never existed. Here is a way on.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "We could not find that page", "body": "The page may have moved. Try the home page, or see when the branch is open.", "link": ["Go to the home page | home.html", "See opening hours | visit.html"]}}]}

@@ -4,6 +4,7 @@
 [tools]
 kitlib.py start.sh gate.py pass.py build.py seed.py uniq.py fontcheck.py greek.py shot.js probe.js
 contact.py milestone.py checkpoint.py pack.py refs.py hook.py setup.sh kitcheck.sh selftest.sh
+policy.py comply.py comply.js tells.py designmd.py
 
 [changes]
 2026-11-19 (CD): the kit begins. Engine (stage prompts P0 and S0-S10, rules, ref with the starter technique library,
@@ -11,3 +12,21 @@ contact.py milestone.py checkpoint.py pack.py refs.py hook.py setup.sh kitcheck.
   plugin (agents per role and an inspiration scout, /studio commands, gate hooks, bin/studio). Inspiration: the
   libraries first, then web sweeps A, B and C. Every build starts from this kit and never changes it; kit changes go
   through G10 with the self-test passing.
+2026-11-19 (CD): compliance. brief.json compliance{} (markets, sector, outside services, data uses); rules as data in
+  ref/compliance/jurisdictions.json (34 jurisdictions, "all" for every one); tools/policy.py and tools/comply.py
+  (--plan at S2; the site at S8 and S9: legal pages and what they cover, footer links, consent behaviour in a
+  browser, forms, declared hosts, CSP-ready markup, security.txt, discoverability; --report writes the handover:
+  checklist, data inventory, WCAG 2.2 conformance report template, server headers). build.py: legal footer nav,
+  the kit consent banner (primitives/consent.*), canonical, favicon, referrer policy, noindex on exempt pages,
+  dir for right-to-left, robots.txt, sitemap.xml, security.txt, _headers. pass.py: layout shift and largest paint.
+  checkpoint.py blocks on comply.py and lists a pending legal review as a client item. Prompts S0, S2, S5, S7, S8,
+  S9, rules and templates updated; fixture gains privacy, accessibility, imprint and 404 pages.
+2026-11-19 (CD): outside sources. pass.py runs the impeccable detector (pinned 4.10.0, Apache-2.0; detect only, no
+  telemetry, the kit's Chromium) as slop:<rule> at 1440 and 390, copy tells (tools/tells.py, after Taste Skill) as
+  copy:<id>, and three new probes: stress (worst-case content at 320, after Emil Kowalski's break-ui), spacing (WCAG
+  1.4.12) and keyboard (skip link first, every control reached, no trap, focus visible, never under a fixed bar).
+  pass.py --system checks motion in the CSS. ref/motion/ and ref/copy/ (own words, sources credited), library rows in
+  sections 7 and 12, new hero forms and motions in catalogue.json, wider defaults.json (faces, accents and trend looks
+  from ui-ux-pro-max and awesome-claude-design, named generically). tools/designmd.py exports the nine-section
+  DESIGN.md; studio browse drives the Playwright agent CLI. Base CSS wraps long words; the consent banner keeps room
+  for itself so focus never hides under it. img2threejs documented as an optional per-project add-on.

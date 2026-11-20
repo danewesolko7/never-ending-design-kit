@@ -37,12 +37,18 @@ GATE CHECKLIST  built by gate.py --checklist (no model prose)
 <each of the 9 taste questions>: <script answer, or CD>
 
 DATA SCHEMAS
-brief.json      project, site_name, key_page, lang, goals[], audience, pages_hint[], brand_assets[], benchmarks[],
-                constraints[], deadline, budget{credits, unit, page_weight_mb, reading_level}, wcag (AAA default, or AA), lean_mode, client{name, role}, open[]
+brief.json      project, site_name, site_url (https), key_page, lang, dir? (rtl|ltr; else from lang), goals[], audience, pages_hint[],
+                brand_assets[], benchmarks[], constraints[], deadline, budget{credits, unit, page_weight_mb, reading_level},
+                wcag (AAA default, or AA), lean_mode, client{name, role}, open[],
+                compliance{jurisdictions[] (codes in ref/compliance/jurisdictions.json, or "all"), sector (commercial|public|nonprofit),
+                  third_parties[{host, purpose, category (necessary|analytics|marketing|media), types[script|style|img|font|connect|frame|form|media],
+                  processor, country, privacy_url}], sells_or_shares, ecommerce, accounts, forms_personal_data, newsletter, children,
+                  security_contact, pages{<role>: <page id>}?, consent_text{}?, legal_review (pending|done)}
 content.json    pages[{id, title, purpose, sections[{id, purpose, fact_ids[], form, words}]}]
 structure.json  page_form, grid{columns, gutter, margin, nested[]}, sections[{id, block, span, order, rhythm, ground}], breakpoints[]
                 (block items: t, start, span, words, size, h, bleed, phone; see tools/greek.py --help)
 tokens.json     color{<role>: hex}, type{faces[{family, source, licence, alternate, role, files[{file, weight}]}], scale[], roles{}},
                 space[], radius[], states{}, motion{durations[], easing, reduced}, breakpoints[]
-pages/<p>.json  id, title, nav?, meta{title, description, og_image}, sections[{id, primitive|partial, variant?, text{<field>: string}, images[<slot>]}]
+pages/<p>.json  id, title, nav? (false hides it; a string is its link label), legal? (footer legal list; the legal page ids are
+                automatic), meta{title, description, og_image}, sections[{id, primitive|partial, variant?, text{<field>: string}, images[<slot>]}]
                 (see tools/build.py --help for field names and partial placeholders)

@@ -4,13 +4,15 @@
     checkpoint.py [--ship-open]
 
 1. Blocker check: a [NEW] figure, a placeholder image, a missing image or font licence, an unresolved fact flag
-   ([CONFLICT] or UNRESOLVED in research.md), a missing rationale.md, or a failed pass.py --package.
-   Client open items are listed; packaging waits until the CD reruns with --ship-open or resolves them.
+   ([CONFLICT] or UNRESOLVED in research.md), a missing rationale.md, a failed pass.py --package, or a failed
+   comply.py. Client open items, and a legal review still pending (brief.json compliance.legal_review), are listed;
+   packaging waits until the CD reruns with --ship-open or resolves them.
 2. Pack the project (out/store/<project>.py), write the final fingerprint to the studio registry, append the usage
    roll-up to studio/registry/usage-log.jsonl, and add each reference the build used to studio/library.md
    (refs.py --promote). Each step runs once, so a rerun after a reopen adds nothing twice. No image is kept.
 3. Export out/package/: every page at 1440 and 390 (key page also 768), the brand sheet, licences, accessibility
-   notes, the rationale, and an index page. The Design System artifact is published at G7, not here.
+   notes, the rationale, the compliance handover (comply.py --report: checklist, data inventory, conformance report
+   template, server headers), DESIGN.md (designmd.py, the nine-section format design agents read), and an index page. The Design System artifact is published at G7, not here.
 A build never changes the engine: the kit stays a clean starting point for the next project.
 """
 import glob, html, json, os, re, subprocess, sys
@@ -60,6 +62,10 @@ def blockers(o):
     r = run([sys.executable, 'tools/pass.py', '--package'])
     if r.returncode:
         o.append('pass.py --package failed: ' + r.stdout.strip().splitlines()[-1])
+    r = run([sys.executable, 'tools/comply.py'])
+    if r.returncode:
+        fl = [l for l in r.stdout.strip().splitlines() if l.startswith('FAIL')]
+        o.append('comply.py failed: ' + (fl[0] if fl else r.stdout.strip().splitlines()[-1]) + (f' (+{len(fl) - 1} more)' if len(fl) > 1 else ''))
 
 
 def final_fingerprint(proj, brief):
@@ -129,7 +135,9 @@ def export(proj, brief):
                                                  for r in (ib if isinstance(ib, list) else [])]
     lic += ['', '## Fonts', ''] + [f'- {f["family"]}: {f.get("source")} | {f.get("licence")}' for f in (tok.get('type') or {}).get('faces', [])]
     write_atomic(os.path.join(pk, 'licences.md'), '\n'.join(lic) + '\n')
-    acc = ['# Accessibility notes', '', 'Target: WCAG 2.2 AAA where achievable, AA floor. Automated: axe-core at 1440 and 390 (pass.py --package).', '']
+    lvl = str(brief.get('wcag', 'AAA')).upper()
+    acc = ['# Accessibility notes', '', f'Target: WCAG 2.2 {lvl}' + (' where achievable, AA floor' if lvl == 'AAA' else '') + '. Automated: axe-core at 1440 and 390 (pass.py --package).'
+           ' Conformance report template: compliance/acr.md.', '']
     for p in pages:
         t = open(P('out', 'site', f'{p}.html'), encoding='utf-8').read()
         hs = [f'{m.group(1)} {re.sub("<[^>]+>", "", m.group(2)).strip()[:60]}' for m in re.finditer(r'<(h[1-4])[^>]*>(.*?)</h[1-4]>', t, re.S)]
@@ -140,6 +148,8 @@ def export(proj, brief):
     write_atomic(os.path.join(pk, 'accessibility.md'), '\n'.join(acc))
     if os.path.exists(P('rationale.md')):
         write_atomic(os.path.join(pk, 'rationale.md'), open(P('rationale.md'), encoding='utf-8').read())
+    run([sys.executable, 'tools/comply.py', '--report'])
+    run([sys.executable, 'tools/designmd.py', '--out', os.path.join(pk, 'DESIGN.md')])
     imgs = sorted(os.path.relpath(f, pk) for f in glob.glob(os.path.join(pk, 'pages', '*.png')) if not f.endswith('-m.png'))
     write_atomic(os.path.join(pk, 'index.html'),
                  f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(proj)}: final package</title>'
@@ -147,7 +157,8 @@ def export(proj, brief):
                  '.p-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}.p-fig{margin:0;max-width:100%}.p-fig img{display:block;max-width:100%;height:auto;outline:1px solid #ccc}'
                  'a{display:inline-flex;min-height:44px;align-items:center}</style></head><body><main>'
                  f'<h1>{html.escape(brief.get("site_name") or proj)}: final package</h1>'
-                 '<p><a href="brand-sheet.html">Brand sheet</a> · <a href="licences.md">Licences</a> · <a href="accessibility.md">Accessibility notes</a> · <a href="rationale.md">Rationale</a></p>'
+                 '<p><a href="brand-sheet.html">Brand sheet</a> · <a href="licences.md">Licences</a> · <a href="accessibility.md">Accessibility notes</a> · <a href="compliance/checklist.md">Compliance checklist</a> · '
+                 '<a href="compliance/data-inventory.md">Data inventory</a> · <a href="DESIGN.md">DESIGN.md</a> · <a href="rationale.md">Rationale</a></p>'
                  '<div class="p-row">' + ''.join(f'<figure class="p-fig"><img src="{i}" alt="{html.escape(os.path.basename(i)[:-4])}" loading="lazy"><figcaption>{html.escape(os.path.basename(i)[:-4])}</figcaption></figure>' for i in imgs)
                  + '</div></main></body></html>')
     return pk, len(pages)
@@ -167,6 +178,8 @@ def main(a):
         return 1
     st = read_json(P('state.json'), {})
     client = [o for o in st.get('open', []) if re.search(r'\|\s*client\b', o, re.I)]
+    if str((brief.get('compliance') or {}).get('legal_review', 'pending')) != 'done':
+        client.append('legal review of the policy pages and consent wording | client (then set brief.json compliance.legal_review to "done")')
     if client and '--ship-open' not in a:
         for c in client[:12]:
             print('CLIENT ' + c)

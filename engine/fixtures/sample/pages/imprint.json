@@ -1,0 +1,6 @@
+{"id": "imprint", "title": "Legal notice", "meta": {"title": "Legal notice | Larch Street Library", "description": "Who runs the Larch Street Library website and how to reach them.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "Legal notice", "body": [
+  "This website is run by Larch Street Library, a branch of the city library service.",
+  "Address: 12 Larch Street, Example Town.",
+  "Email: hello@example.org. Phone: by appointment at the front desk.",
+  "The branch manager is responsible for what this site says."]}}]}

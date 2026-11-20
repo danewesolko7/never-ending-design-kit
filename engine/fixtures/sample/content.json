@@ -1,7 +1,118 @@
-{"pages": [
- {"id": "home", "title": "Home", "purpose": "Welcome and next step", "sections": [
-   {"id": "s1", "purpose": "Say what the branch is", "fact_ids": ["f1"], "form": "title page", "words": 40},
-   {"id": "s2", "purpose": "Show what is on", "fact_ids": [], "form": "list", "words": 60},
-   {"id": "s3", "purpose": "Next step", "fact_ids": [], "form": "links", "words": 20}]},
- {"id": "about", "title": "About", "purpose": "History", "sections": [{"id": "s1", "purpose": "History", "fact_ids": [], "form": "essay", "words": 80}]},
- {"id": "visit", "title": "Visit", "purpose": "Hours and access", "sections": [{"id": "s1", "purpose": "Hours", "fact_ids": [], "form": "timetable", "words": 50}]}]}
+{
+ "pages": [
+  {
+   "id": "home",
+   "title": "Home",
+   "purpose": "Welcome and next step",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Say what the branch is",
+     "fact_ids": [
+      "f1"
+     ],
+     "form": "title page",
+     "words": 40
+    },
+    {
+     "id": "s2",
+     "purpose": "Show what is on",
+     "fact_ids": [],
+     "form": "list",
+     "words": 60
+    },
+    {
+     "id": "s3",
+     "purpose": "Next step",
+     "fact_ids": [],
+     "form": "links",
+     "words": 20
+    }
+   ]
+  },
+  {
+   "id": "about",
+   "title": "About",
+   "purpose": "History",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "History",
+     "fact_ids": [],
+     "form": "essay",
+     "words": 80
+    }
+   ]
+  },
+  {
+   "id": "visit",
+   "title": "Visit",
+   "purpose": "Hours and access",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Hours",
+     "fact_ids": [],
+     "form": "timetable",
+     "words": 50
+    }
+   ]
+  },
+  {
+   "id": "privacy",
+   "title": "Privacy notice",
+   "purpose": "What data the site collects and the visitor's rights",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Privacy notice",
+     "fact_ids": [],
+     "form": "document",
+     "words": 150
+    }
+   ]
+  },
+  {
+   "id": "accessibility",
+   "title": "Accessibility statement",
+   "purpose": "How accessible the site is and how to report a problem",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Statement",
+     "fact_ids": [],
+     "form": "document",
+     "words": 120
+    }
+   ]
+  },
+  {
+   "id": "imprint",
+   "title": "Legal notice",
+   "purpose": "Who runs the site",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Provider details",
+     "fact_ids": [],
+     "form": "document",
+     "words": 50
+    }
+   ]
+  },
+  {
+   "id": "404",
+   "title": "Page not found",
+   "purpose": "A way on from a broken link",
+   "sections": [
+    {
+     "id": "s1",
+     "purpose": "Way on",
+     "fact_ids": [],
+     "form": "links",
+     "words": 30
+    }
+   ]
+  }
+ ]
+}

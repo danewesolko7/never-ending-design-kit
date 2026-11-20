@@ -4,9 +4,9 @@
  "grids": ["manuscript column", "multi-column modular", "hierarchical", "baseline-led modular", "mosaic", "compound 5+6", "rows as time", "golden-section canvas", "asymmetric 7+5", "nested per section", "radial", "isometric", "fluid intrinsic"],
  "movements": ["Bauhaus", "Swiss International", "Postmodern", "Minimal flat", "Brutalist", "Motion and 3D", "Constructivist", "Arts and Crafts", "Art Deco", "Mid-century corporate", "Victorian jobbing", "Japanese editorial", "Dutch structuralist", "Punk zine"],
  "type_classes": ["grotesque", "neo-grotesque", "geometric sans", "humanist sans", "transitional serif", "old-style serif", "didone", "slab serif", "mono", "condensed display", "wide display", "stencil", "blackletter", "script", "variable width sans", "rounded sans"],
- "hero_forms": ["title page", "full-bleed image", "big figure", "diagram first", "index first", "statement only", "split-free stack", "masked type", "object on ground"],
+ "hero_forms": ["title page", "full-bleed image", "big figure", "diagram first", "index first", "statement only", "split-free stack", "masked type", "object on ground", "cinema frame", "one product on a stage", "quiet statement over a ground"],
  "nav_patterns": ["top bar", "index page", "numbered contents", "footer-led", "sticky tabs", "locator in every section", "breadcrumb trail"],
  "image_treatments": ["straight colour", "duotone", "halftone", "black and white", "cut-out", "colour wash", "posterised", "photogram", "line drawing", "collage"],
  "textures": ["none", "halftone dots", "paper grain", "rules and hairlines", "scribe lines", "overprint", "risograph grain", "blueprint"],
- "motions": ["none", "load-time reveal", "scroll fill", "hover etch", "sticky pin", "counting figures", "drawn line"]
+ "motions": ["none", "load-time reveal", "scroll fill", "hover etch", "sticky pin", "counting figures", "drawn line", "photo chapters", "pinned steps", "statement lights up", "picture develops", "iris to a new ground"]
 }

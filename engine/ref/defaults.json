@@ -1,5 +1,5 @@
 {
- "_about": "Common tool and template defaults. uniq.py fails an option whose display face, accent or signature moves match one, so build one is checked even with no history. Names are generic; add entries at G10.",
+ "_about": "Common tool and template defaults. uniq.py fails an option whose display face, accent or signature moves match one, so build one is checked even with no history. Names are generic; add entries at G10. Sources: the kit's own reviews; the faces used in three or more of ui-ux-pro-max's 74 font pairings and the chromatic accents most repeated across its 194 palettes (nextlevelbuilder, MIT); trend styles from its style list; the looks AI design tools are pointed at in awesome-claude-design (VoltAgent, MIT), named generically, never by brand.",
  "faces": [
   "Inter",
   "Roboto",
@@ -17,7 +17,11 @@
   "Outfit",
   "Arial",
   "Helvetica",
-  "system-ui"
+  "system-ui",
+  "Playfair Display",
+  "IBM Plex Sans",
+  "JetBrains Mono",
+  "Space Mono"
  ],
  "accents": [
   "#6366f1",
@@ -29,7 +33,19 @@
   "#2563eb",
   "#06b6d4",
   "#10b981",
-  "#ec4899"
+  "#ec4899",
+  "#059669",
+  "#ea580c",
+  "#d97706",
+  "#16a34a",
+  "#dc2626",
+  "#0891b2",
+  "#22c55e",
+  "#f59e0b",
+  "#0369a1",
+  "#0284c7",
+  "#0d9488",
+  "#0ea5e9"
  ],
  "accent_delta_e": 6,
  "moves": [
@@ -46,6 +62,27 @@
   "stat strip",
   "numbered step cards",
   "floating blobs",
-  "neon glow"
+  "neon glow",
+  "neumorphism",
+  "claymorphism",
+  "aurora gradient",
+  "liquid glass",
+  "gradient mesh",
+  "soft ui shadows",
+  "hero then three features then cta",
+  "testimonials before the cta",
+  "three-tier pricing table",
+  "faq accordion close",
+  "eyebrow pill above headline",
+  "gradient text headline",
+  "glowing shadow accents",
+  "radial glow behind hero",
+  "dot grid background",
+  "void black with neon accent",
+  "monochrome terminal look",
+  "warm terracotta on cream",
+  "cinematic dark media hero",
+  "blueprint grid technical",
+  "auto-scrolling logo marquee"
  ]
 }

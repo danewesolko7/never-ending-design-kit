@@ -4,9 +4,10 @@ Copyright 2026 Dane Wesolko
 Licensing
 - Code: Apache License 2.0 (LICENSE). Covers engine/tools/, engine/primitives/, engine/fixtures/, engine/deps/,
   engine/requirements.txt, engine/settings.json, engine/MANIFEST, bin/, hooks/, .claude-plugin/ and .github/.
+  engine/primitives/ includes consent.js and consent.css, which projects ship in their sites.
 - Content: Creative Commons Attribution 4.0 International (LICENSE-CONTENT). Covers engine/prompts/, engine/rules/,
   engine/ref/ (including library.md, catalogue.json and defaults.json), engine/adapters/, agents/, commands/,
-  skills/, studio.example/ and README.md. Reuse must credit "Never-ending design kit,
+  skills/, studio.example/, README.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md and SECURITY.md. Reuse must credit "Never-ending design kit,
   Dane Wesolko".
 
 Third-party material
@@ -14,12 +15,31 @@ Third-party material
   words and name their sources (for example Nielsen Norman Group, GOV.UK Service Manual and Design System, W3C WCAG,
   Every Layout, Utopia, Refactoring UI, the FT Visual Vocabulary, Design Council). Those names identify sources; they
   imply no endorsement, and their own works stay under their own terms.
+- engine/ref/compliance/ names laws, regulations and standards (for example the GDPR, the CCPA, WCAG 2.2, RFC 9116)
+  and summarises what they ask of a website in the kit's own words. It reproduces no legal text, is not legal advice,
+  and implies no endorsement by any regulator. CODE_OF_CONDUCT.md adopts the Contributor Covenant 2.1 by reference.
+- Adapted under the MIT licence, with methods and lists rewritten in the kit's own words: the copy-tell lists in
+  engine/tools/tells.py and engine/ref/copy/ (Taste Skill, Copyright (c) 2026 Leonxlnx); the motion standards in
+  engine/ref/motion/ and the worst-case content in engine/ref/copy/stress.md and tools/probe.js (skills, Copyright
+  (c) 2026 Emil Kowalski); the default faces, accents and trend styles in engine/ref/defaults.json (ui-ux-pro-max,
+  Copyright (c) 2024 Next Level Builder); the DESIGN.md section list in engine/tools/designmd.py and generic look
+  names in defaults.json (awesome-claude-design, Copyright (c) 2026 VoltAgent). For each: "Permission is hereby
+  granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+  modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom
+  the Software is furnished to do so, subject to the following conditions: The above copyright notice and this
+  permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS
+  PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
 - engine/ref/library.md, the starter technique library, describes each technique in the kit's own words and names
   the public work it was seen in; the linked works stay under their own terms.
 - engine/primitives/ implements layout patterns named in Every Layout (Heydon Pickering and Andy Bell) in CSS written
   for this kit.
 - The kit downloads, and never redistributes, these dependencies, each under its own licence: axe-core (MPL-2.0),
-  Playwright (Apache-2.0), Fontsource font packages (each face's own licence, usually SIL OFL 1.1), Pillow (MIT-CMU).
+  Playwright (Apache-2.0, including its agent CLI), impeccable and its platform engine (Apache-2.0; only its
+  detect command is used, with telemetry off), Fontsource font packages (each face's own licence, usually SIL OFL 1.1), Pillow (MIT-CMU).
 - Material licensed for internal use only (for example "free to use inside your company, not for resale") must not be
   copied into this repository. Re-derive the method from its original public source and cite that source instead.
 

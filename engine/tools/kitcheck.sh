@@ -19,8 +19,12 @@ for p in P0 S0 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10; do
   f="prompts/$p.md"; [ -f "$f" ] || { say MISSING "$f"; continue; }
   n=$(sed '/^<!--/d' "$f" | wc -w); [ "$n" -le 250 ] || say LONG "$f is $n words (cap 250)"
 done
-for f in prompts/templates.md prompts/role-template.md rules/rules.md settings.json primitives/primitives.css ref/catalogue.json; do
+for f in prompts/templates.md prompts/role-template.md rules/rules.md settings.json primitives/primitives.css ref/catalogue.json \
+         primitives/consent.js primitives/consent.css primitives/consent.json ref/compliance/jurisdictions.json ref/compliance/wcag22.json \
+         ref/motion/INDEX.md ref/copy/INDEX.md; do
   [ -f "$f" ] || say MISSING "$f"; done
+python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['jurisdictions'] and d['requirements']" ref/compliance/jurisdictions.json 2>/dev/null \
+  || say BROKEN "ref/compliance/jurisdictions.json (not JSON, or no jurisdictions or requirements)"
 for f in studio.json taste.md taste-checks.md library.md registry/fingerprints.jsonl registry/usage-log.jsonl; do
   [ -f "$H/studio/$f" ] || say MISSING "studio/$f (copy it from studio.example/)"; done
 [ -f "$H/studio/taste-checks.md" ] && { n=$(wc -w < "$H/studio/taste-checks.md"); [ "$n" -le 150 ] || say LONG "studio/taste-checks.md is $n words (cap 150)"; }

@@ -1,0 +1,8 @@
+{"id": "accessibility", "title": "Accessibility statement", "meta": {"title": "Accessibility statement | Larch Street Library", "description": "How well the library website works for everyone, and how to tell us about a problem.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "Accessibility statement", "body": [
+  "We want everyone to be able to use this website. We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AAA.",
+  "The site partially conforms to that standard. It meets level AA and most of level AAA.",
+  "Known limitations: some old event lists are scans of paper sheets. They are not yet accessible. We plan to replace them by June 2027.",
+  "If you find a problem, or need a page in another format, tell us. Email access@example.org and we will reply within five working days.",
+  "If you are not happy with our reply, you can complain to the equality body. This is the enforcement procedure.",
+  "This statement was prepared in November 2026, when we last tested the site."]}}]}

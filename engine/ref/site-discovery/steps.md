@@ -2,7 +2,7 @@
 1. Fetch the existing site and every relevant page or document. Extract real facts: products or services, people, history, credentials, named work, available photos, contact details.
 2. Research 5 comparable sites the same audience also visits. For each, record positioning, what the home page leads with, and one thing none of them say. If there are few direct peers, use adjacent ones and label them that way.
 3. List constraints:
-   - legal or regulatory (required notices, licences, privacy law)
+   - legal or regulatory (required notices, licences, privacy law; the markets and outside services for brief.json compliance, ref/compliance/brief.md)
    - accessibility target and platform limits
    - existing brand assets that must be kept
    - what the reader must find in 10 seconds

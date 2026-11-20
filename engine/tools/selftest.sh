@@ -14,6 +14,7 @@ cd "$W"; cp -R studio.example studio; mkdir -p projects; cp -r engine/fixtures/s
 cp engine/fixtures/registry.jsonl studio/registry/fingerprints.jsonl; : > studio/registry/usage-log.jsonl
 # the kit holds no images: the fixture's one photo is drawn here, so the golden files test the real-image path
 mkdir -p projects/fx/images && python3 -c "from PIL import Image; Image.new('RGB', (1200, 1500), (120, 110, 100)).save('projects/fx/images/hero.jpg', quality=60)"
+printf '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32"/></svg>\n' > projects/fx/images/favicon.svg
 export NODE_PATH="$(cat .node)" KIT_HOME="$W"; cd engine
 python3 - <<'PY'
 import json; f='../projects/fx/brief.json'; d=json.load(open(f)); d['project']='fx'; json.dump(d, open(f,'w'))
@@ -84,6 +85,78 @@ step "milestone.py frames concepts and directions"    bash -c 'python3 tools/mil
 step "pass.py --rough measures the rough"             python3 tools/pass.py --rough
 step "contact.py makes a sheet of 1000px or less"     bash -c 'python3 tools/contact.py ../projects/fx/out/sheet.png "../projects/fx/out/rough/png/home-*-m.png" && python3 -c "from PIL import Image;i=Image.open(\"../projects/fx/out/sheet.png\");assert max(i.size)<=1000"'
 step "fontcheck.py passes with licences"              python3 tools/fontcheck.py
+echo "-- phase 2b: compliance"
+cp -r ../projects/fx ../projects/fx.bak
+step "policy.py lists the markets' pages and features" bash -c 'python3 tools/policy.py | grep -q "^pages: privacy, terms (recommended), accessibility, imprint, 404$" && python3 tools/policy.py | grep -q "^jurisdictions: DE, EU, UK, US, US-CA$"'
+step "build.py writes legal footer, head and site files" bash -c 'python3 tools/build.py --all >/dev/null && S=../projects/fx/out/site && grep -q "<nav class=\"k-legal\" aria-label=\"Legal\">.*privacy.html.*accessibility.html.*imprint.html" $S/home.html && grep -q "rel=\"canonical\" href=\"https://example.org/home.html\"" $S/home.html && grep -q "rel=\"icon\"" $S/home.html && grep -q "noindex" $S/404.html && ! grep -q "privacy.html" <(grep -o "<nav class=\"k-nav\".*</nav>" $S/home.html) && grep -q "^Contact: mailto:" $S/.well-known/security.txt && grep -q "Content-Security-Policy: default-src .self." $S/_headers && grep -q "/privacy.html<" $S/sitemap.xml && ! grep -q "/404.html" $S/sitemap.xml && grep -q "^Sitemap: https://example.org/sitemap.xml" $S/robots.txt && ! test -e $S/consent.js'
+step "comply.py --plan passes the fixture plan"        python3 tools/comply.py --plan
+plant; python3 -c "import json;f='../projects/fx/content.json';d=json.load(open(f));d['pages']=[p for p in d['pages'] if p['id']!='privacy'];json.dump(d,open(f,'w'))"
+step "comply.py --plan fails a missing privacy page"  bash -c 'python3 tools/comply.py --plan | grep -q "FAIL page:privacy"'
+plant
+step "comply.py passes the fixture site"              python3 tools/comply.py
+plant; python3 -c "import json;f='../projects/fx/brief.json';d=json.load(open(f));d.pop('compliance');json.dump(d,open(f,'w'))"
+step "comply.py fails a brief with no compliance block" bash -c '! python3 tools/comply.py --plan | grep -q PASS && python3 tools/comply.py --plan | grep -q "FAIL brief: brief.json has no compliance"'
+plant; sedi 's/We keep these logs for 30 days. Then they are deleted./Logs go away./' ../projects/fx/pages/privacy.json
+step "comply.py fails a topic a page must cover"      bash -c 'python3 tools/comply.py | grep -q "FAIL cover:privacy-retention"'
+plant; echo '<footer class="ft-foot"><p class="ft-name">{{site}}</p></footer>' > ../projects/fx/partials/footer.html
+step "comply.py fails a footer without the legal links" bash -c 'python3 tools/comply.py | grep -q "FAIL feature:footer: footer has no link to privacy, accessibility, imprint"'
+plant; echo '<form class="fm-form" action="contact.html"><label for="e">Email</label><input id="e" name="email" type="email" autocomplete="email"><input id="n" name="news" type="checkbox" checked><label for="n">News</label><button type="submit">Send</button></form>' > ../projects/fx/partials/form.html
+python3 -c "import json;f='../projects/fx/pages/about.json';d=json.load(open(f));d['sections'].append({'id':'s9','partial':'form','text':{}});json.dump(d,open(f,'w'))"
+step "comply.py fails a form: no privacy link, a ticked box" bash -c 'python3 tools/comply.py > ../c.out; grep -q "FAIL feature:forms: form 1 collects email, news with no link to privacy.html" ../c.out && grep -q "FAIL feature:forms: form 1 has \"news\" ticked" ../c.out'
+# consent: analytics and advertising declared, scripts gated, cookie and privacy-choices pages written
+consent() { plant; python3 - <<'PY'
+import json
+P = '../projects/fx/'
+b = json.load(open(P + 'brief.json')); c = b['compliance']
+c['third_parties'] = [{'host': 'stats.example.com', 'purpose': 'Counts visits', 'category': 'analytics', 'types': ['script', 'connect']},
+                      {'host': 'ads.example.net', 'purpose': 'Advertising', 'category': 'marketing', 'types': ['script']}]
+json.dump(b, open(P + 'brief.json', 'w'))
+def page(i, t, body, nav=None):
+    d = {'id': i, 'title': t, 'meta': {'title': t + ' | Larch Street Library', 'description': t + ' for the library website.', 'og_image': 'images/og.png'},
+         'sections': [{'id': 's1', 'primitive': 'stack', 'text': {'h1': t, 'body': body}}]}
+    if nav: d['nav'] = nav
+    json.dump(d, open(P + 'pages/' + i + '.json', 'w'))
+page('cookies', 'Cookie policy', ['We use two outside tools, and only if you say yes.', 'Measurement counts visits. Its purpose is to show which pages help. It lasts for one year.',
+     'Advertising lets partners show ads. It lasts for six months.', 'To change your choice, use the cookie settings link at the foot of every page.'])
+page('privacy-choices', 'Your privacy choices', ['You can opt out of the sale or sharing of your data, and of targeted ads.', 'We honour the Global Privacy Control signal from your browser.'], 'Your Privacy Choices')
+a = json.load(open(P + 'pages/about.json')); a['sections'].append({'id': 's9', 'partial': 'tags', 'text': {}}); json.dump(a, open(P + 'pages/about.json', 'w'))
+open(P + 'partials/tags.html', 'w').write('<script type="text/plain" data-consent="analytics" data-src="https://stats.example.com/a.js"></script>'
+                                          '<script type="text/plain" data-consent="marketing" data-src="https://ads.example.net/t.js"></script>')
+PY
+}
+consent
+step "comply.py passes consent: banner, reject, reopen, GPC" bash -c 'python3 tools/comply.py > ../c.out; r=$?; grep -q "<div class=\"k-consent\"" ../projects/fx/out/site/home.html && test -f ../projects/fx/out/site/consent.js && grep -q "data-consent-open" ../projects/fx/out/site/home.html && grep -q "https://stats.example.com" ../projects/fx/out/site/_headers && test $r = 0 || { cat ../c.out; exit 1; }'
+step "pass.py passes with the consent banner showing" python3 tools/pass.py --page home
+consent; rm ../projects/fx/pages/cookies.json
+step "comply.py fails tracking without a cookie page"  bash -c 'python3 tools/comply.py | grep -q "FAIL page:cookies"'
+consent; echo '<script src="https://stats.example.com/a.js"></script><img src="https://cdn.other.example/x.png" alt="" width="1" height="1">' > ../projects/fx/partials/tags.html
+step "comply.py fails an ungated script and an undeclared host" bash -c 'python3 tools/comply.py > ../c.out; grep -q "stats.example.com (analytics) loads without waiting for consent" ../c.out && grep -q "stats.example.com loads before any consent choice" ../c.out && grep -q "cdn.other.example (img) is not declared" ../c.out'
+consent; echo '.k-consent-btn[data-consent-act=reject]{font-size:12px}' > ../projects/fx/partials/tags.css
+step "comply.py fails reject styled unlike accept"    bash -c 'python3 tools/comply.py | grep -q "FAIL feature:consent: reject and accept differ"'
+consent; cp primitives/consent.js ../consent.js.bak && sedi 's/if (gpc) c.marketing = false;//' primitives/consent.js
+step "comply.py fails a banner that ignores GPC"      bash -c 'python3 tools/comply.py | grep -q "FAIL feature:gpc"'; cp ../consent.js.bak primitives/consent.js
+plant; sedi 's/We keep these logs for 30 days. Then they are deleted./Logs go away./' ../projects/fx/pages/privacy.json
+step "comply.py honours a CD override"                bash -c 'python3 tools/gate.py --override comply --target cover:privacy-retention --reason test >/dev/null && python3 tools/comply.py | grep -q "OVERRIDDEN cover:privacy-retention"'
+plant
+step "comply.py --report writes the handover"         bash -c 'python3 tools/comply.py --report >/dev/null && C=../projects/fx/out/package/compliance && grep -q "| PASS | page:privacy |" $C/checklist.md && grep -q "GDPR" $C/checklist.md && grep -q "2.5.8 Target Size (Minimum)" $C/acr.md && grep -q "add_header Content-Security-Policy" $C/headers/nginx.conf && python3 -c "import json,sys;json.load(open(sys.argv[1]))" $C/headers/vercel.json && grep -q "Nothing: the site sets no cookies" $C/data-inventory.md'
+plant; rm -rf ../projects/fx.bak ../c.out ../consent.js.bak
+echo "-- phase 2c: craft checks from outside sources"
+cp -r ../projects/fx ../projects/fx.bak
+step "impeccable runs with telemetry off on the pinned Chromium" bash -c 'python3 -c "import sys;sys.path.insert(0,\"tools\");from kitlib import node_env;e=node_env();assert e[\"DO_NOT_TRACK\"]==\"1\" and e[\"IMPECCABLE_NO_TELEMETRY\"]==\"1\" and e.get(\"IMPECCABLE_BROWSER\")" && test -x "$(cat ../.node)/.bin/impeccable"'
+plant; echo '.op-title{background:linear-gradient(90deg,#6366f1,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}' >> ../projects/fx/partials/opener.css; sedi 's/Borrow books, use a computer/Unlock seamless reading, use a computer/' ../projects/fx/pages/home.json
+step "pass.py fails design slop and copy tells"       bash -c 'python3 tools/pass.py --page home > ../c.out; grep -q "FAIL slop:gradient-text" ../c.out && grep -q "FAIL copy:slop-word" ../c.out'
+step "pass.py honours a per-rule slop override"       bash -c 'python3 tools/gate.py --override pass --target slop:gradient-text --reason test >/dev/null && python3 tools/pass.py --page home | grep -q "OVERRIDDEN slop:gradient-text"'
+plant; python3 -c "import json;f='../projects/fx/brief.json';d=json.load(open(f));d['copy_allow']=['seamless','unlock'];json.dump(d,open(f,'w'))"; sedi 's/Borrow books, use a computer/Unlock seamless reading, use a computer/' ../projects/fx/pages/home.json
+step "copy_allow keeps a word literal for the trade"  bash -c '! python3 tools/pass.py --page home | grep -q "copy:slop-word"'
+plant; echo '.wd-p{white-space:nowrap;overflow:hidden}' > ../projects/fx/partials/wd.css; echo '<section class="wd-sec" id="wd"><p class="wd-p" tabindex="2">{{raw}}</p></section>' > ../projects/fx/partials/wd.html
+python3 -c "import json;f='../projects/fx/pages/about.json';d=json.load(open(f));d['sections'].append({'id':'s9','partial':'wd','text':{'raw':'Ask at the desk for a card.'}});json.dump(d,open(f,'w'))"
+step "pass.py fails worst-case content and focus order" bash -c 'python3 tools/pass.py --page about > ../c.out; grep -q "^FAIL stress" ../c.out && grep -q "^FAIL keyboard" ../c.out'
+plant; echo '.k-stack{transition:all 800ms ease-in}' >> ../projects/fx/partials/main.css
+step "pass.py --system fails interface motion in CSS"  bash -c 'python3 tools/pass.py --system > ../c.out; grep -q "FAIL motion-css: transition on \"all\"" ../c.out && grep -q "FAIL motion-css: ease-in" ../c.out'
+plant
+step "designmd.py writes the nine-section DESIGN.md"  bash -c 'python3 tools/designmd.py >/dev/null && test "$(grep -c "^## [1-9]\. " ../projects/fx/out/design/DESIGN.md)" = 9 && grep -q "| accent | #1f4d3a |" ../projects/fx/out/design/DESIGN.md'
+step "studio browse opens a built page; Tab reaches the skip link" bash -c 'python3 tools/build.py --all >/dev/null; B=../bin/studio; KIT_PROJECT=fx $B browse page home | grep -q "Page Title: Larch Street Library" && KIT_PROJECT=fx $B browse press Tab >/dev/null && KIT_PROJECT=fx $B browse eval "() => document.activeElement.className" | grep -q k-skip; r=$?; KIT_PROJECT=fx $B browse close >/dev/null 2>&1; exit $r'
+plant; rm -rf ../projects/fx.bak ../c.out
 echo "-- phase 3: uniqueness and registry"
 step "fixture registry holds six projects"              bash -c 'test "$(python3 -c "import json;print(len({json.loads(l)[\"project\"] for l in open(\"../studio/registry/fingerprints.jsonl\") if l.strip()}))")" -ge 6'
 step "seed.py lists unused ground"                    bash -c 'python3 tools/seed.py | grep -q "unused page forms"'
@@ -119,8 +192,10 @@ cp ../state.bak ../projects/fx/state.json
 echo "-- packaging"
 step "checkpoint.py blocks on a [NEW] figure"         bash -c 'sedi "s/Story time/[NEW] 40 children at story time/" ../projects/fx/pages/home.json; ! python3 tools/checkpoint.py; r=$?; sedi "s/\[NEW\] 40 children at story time/Story time/" ../projects/fx/pages/home.json; exit $r'
 step "checkpoint.py blocks on a [NEW: note] figure"  bash -c 'sedi "s/Story time/[NEW: count] 40 children at story time/" ../projects/fx/pages/home.json; ! python3 tools/checkpoint.py; r=$?; sedi "s/\[NEW: count\] 40 children at story time/Story time/" ../projects/fx/pages/home.json; exit $r'
+step "checkpoint.py blocks on a failing comply.py"     bash -c 'mv ../projects/fx/pages/imprint.json ../imprint.bak; python3 tools/checkpoint.py > ../ck.out; r=$?; mv ../imprint.bak ../projects/fx/pages/imprint.json; rm -f ../projects/fx/out/site/imprint.html; test $r = 1 && grep -q "BLOCKED comply.py failed: FAIL page:imprint" ../ck.out'
+step "checkpoint.py holds a pending legal review"      bash -c 'sedi "s/\"legal_review\": \"done\"/\"legal_review\": \"pending\"/" ../projects/fx/brief.json; python3 tools/checkpoint.py > ../ck.out; r=$?; sedi "s/\"legal_review\": \"pending\"/\"legal_review\": \"done\"/" ../projects/fx/brief.json; test $r = 1 && grep -q "^CLIENT legal review" ../ck.out'
 step "pass.py --all fails a page nobody can reach"    bash -c 'cp ../projects/fx/pages/about.json ../projects/fx/pages/lost.json && python3 -c "import json;f=\"../projects/fx/pages/lost.json\";d=json.load(open(f));d[\"id\"]=\"lost\";d[\"nav\"]=False;d.setdefault(\"meta\",{})[\"title\"]=\"Lost\";d[\"meta\"][\"description\"]=\"Lost page\";json.dump(d,open(f,\"w\"))" && python3 tools/pass.py --all | grep -q "FAIL reach: lost"; r=$?; rm -f ../projects/fx/pages/lost.json ../projects/fx/out/site/lost.html; python3 tools/build.py --all >/dev/null; exit $r'
-step "checkpoint.py packages and records"             bash -c 'python3 tools/checkpoint.py && test -f ../projects/fx/out/package/index.html && ! test -e ../studio/registry/thumbs && grep -q "\"project\": \"fx\"" ../studio/registry/fingerprints.jsonl && grep -q "\"type\": \"stage\"" ../studio/registry/usage-log.jsonl'
+step "checkpoint.py packages and records"             bash -c 'python3 tools/checkpoint.py && test -f ../projects/fx/out/package/index.html && test -f ../projects/fx/out/package/compliance/checklist.md && ! test -e ../studio/registry/thumbs && grep -q "\"project\": \"fx\"" ../studio/registry/fingerprints.jsonl && grep -q "\"type\": \"stage\"" ../studio/registry/usage-log.jsonl'
 step "checkpoint.py promotes used references once"   bash -c 'n1=$(wc -l < ../studio/registry/usage-log.jsonl) && python3 tools/checkpoint.py >/dev/null && test "$(grep -c "Index-card headings" ../studio/library.md)" = 1 && test "$(wc -l < ../studio/registry/usage-log.jsonl)" = "$n1"'
 step "gate.py --retro opens S10; G10 closes it"      bash -c 'python3 tools/gate.py --retro >/dev/null && grep -q "\"stage\": \"10\"" ../projects/fx/state.json && python3 tools/gate.py --decide G10 --approve >/dev/null && grep -q "\"status\": \"packaged\"" ../projects/fx/state.json'
 step "pack.py round trip (kit + project)"             bash -c 'python3 tools/pack.py --kit ../k.py >/dev/null && python3 tools/pack.py fx ../p.py >/dev/null && cd .. && python3 k.py fresh >/dev/null && python3 p.py fresh >/dev/null && test -f fresh/engine/tools/gate.py && test -f fresh/projects/fx/pages/home.json'

@@ -4,12 +4,17 @@
     pass.py --rough [<key>]           greeked rough: overflow, text-on-image, section crossings, height
     pass.py --page <id> | --all       build.py, then widths 1440/768/390/320, WCAG 2.2 AAA (axe), widows, overlaps,
                                       44px targets, meta and sharing, headings, code standard, page weight,
-                                      copy x1.3 expansion, motion, reading level
+                                      copy x1.3 expansion, motion, reading level, layout shift and largest paint,
+                                      worst-case data (stress), WCAG text spacing, a keyboard pass, design slop
+                                      (impeccable detect, at 1440 and 390) and copy tells (tools/tells.py)
     pass.py --system                  the specimen page, plus components against tokens, focus and reduced motion
     pass.py --package                 every page and the system together (checkpoint.py runs this)
 
 Prints 20 lines or fewer; the full report is out/reports/pass-<mode>.md and out/pass.json. Exit 1 on any failure.
-Warnings (never fail): page height over the artboard, stacked rules, figure styles.
+Warnings (never fail): page height over the artboard, stacked rules, figure styles, and every slop-advice:<rule> and
+copy-advice:<id>. Slop and copy checks are named per rule (slop:<rule>, copy:<id>), so the CD overrides one at a
+time. --system also checks motion in the CSS: no transition on "all", no animated layout properties, no scale(0),
+no ease-in on interface motion, interface transitions at 500ms or less (Emil Kowalski's standards; ref/motion/).
 Accessibility runs at WCAG 2.2 AAA unless brief.json says "wcag": "AA". A check the CD overrode
 (gate.py --override pass --target <check> --reason "..") is reported as OVERRIDDEN and does not fail.
 --all and --package also fail a page no visitor can reach from the key page (reach).
@@ -17,15 +22,69 @@ Accessibility runs at WCAG 2.2 AAA unless brief.json says "wcag": "AA". A check 
 import glob, json, os, re, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from kitlib import J, P, Out, die, event, node_env, read_json, write_json, current_project
+import tells
 
 S = read_json(J('settings.json'))
 WARN = {'height', 'rules', 'numerals'}
+ADVICE = ('slop-advice:', 'copy-advice:')
+
+
+def is_warn(check):
+    return check in WARN or check.startswith(ADVICE)
+
+
+def slop(files):
+    """impeccable detect (pinned, deterministic rules, no model, no telemetry) on each page at 1440 and 390."""
+    env = node_env()
+    exe = os.path.join(env['KIT_NODE'], '.bin', 'impeccable')
+    if not os.path.exists(exe):
+        return [{'page': '-', 'width': '-', 'check': 'slop', 'detail': 'impeccable not installed: run tools/setup.sh'}]
+    out, urls = [], ['file://' + os.path.abspath(f) for f in files]
+    for w, vp in ((1440, '1440x900'), (390, '390x844')):
+        r = subprocess.run([exe, 'detect', '--json', '--no-config', '--viewport', vp] + urls, capture_output=True, text=True, env=env)
+        try:
+            found = json.loads(r.stdout or '[]')
+        except ValueError:
+            return out + [{'page': '-', 'width': w, 'check': 'slop', 'detail': 'impeccable detect failed: ' + (r.stderr or r.stdout)[-160:]}]
+        for x in found:
+            pre = 'slop-advice:' if x.get('severity') == 'advisory' else 'slop:'
+            out.append({'page': os.path.basename(str(x.get('file', '')))[:-5] or '-', 'width': w, 'check': pre + str(x.get('antipattern')),
+                        'detail': f'{x.get("name", "")}: {x.get("snippet", "")}'[:160]})
+    event('render', len(files) * 2)
+    return out
+
+
+def copy_tells(files, brief):
+    out = []
+    for f in files:
+        for i, hard, d in tells.check(f, brief.get('copy_allow') or []):
+            out.append({'page': os.path.basename(f)[:-5], 'width': '-', 'check': ('copy:' if hard else 'copy-advice:') + i, 'detail': d})
+    return out
+
+
+MOTION = [(r'transition(-property)?\s*:[^;}]*\ball\b', 'transition on "all": name the properties (transform, opacity)'),
+          (r'transition(-property)?\s*:[^;}]*\b(width|height|top|left|right|bottom|margin[\w-]*|padding[\w-]*)\b', 'transition on a layout property: animate transform or opacity'),
+          (r'scale\(\s*0\s*\)', 'scale(0): start from 0.9 to 0.97 with opacity 0; nothing appears from nothing'),
+          (r'transition[^;}]*\bease-in\b(?!-)', 'ease-in on interface motion: it delays the moment the visitor watches; use ease-out')]
+
+
+def motion_css(o, css):
+    body = re.sub(r'@media\s*\(prefers-reduced-motion[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}', '', css)
+    for pat, why in MOTION:
+        m = re.search(pat, body, re.I)
+        if m:
+            o.add(f'FAIL motion-css: {why} ("{m.group(0)[:50]}")', True)
+    for m in re.finditer(r'transition(?:-duration)?\s*:[^;}]*?(\d+(?:\.\d+)?)(ms|s)\b', body):
+        ms = float(m.group(1)) * (1000 if m.group(2) == 's' else 1)
+        if ms > 500:
+            o.add(f'warn motion-css: a {ms:g}ms transition: interface motion stays under 300ms (modals and drawers to 500ms)')
+            break
 
 
 def probe(files, widths, mode):
     wcag = str((read_json(P('brief.json'), {}) or {}).get('wcag', 'AAA')).upper()
     cfg = {'files': [os.path.abspath(f) for f in files], 'widths': widths, 'mode': mode, 'wcag': wcag,
-           'expansion': S['expansion'] if mode == 'page' else 0, 'artboard': S['artboard_px']}
+           'expansion': S['expansion'] if mode == 'page' else 0, 'artboard': S['artboard_px'], 'vitals': S.get('vitals')}
     r = subprocess.run(['node', J('tools', 'probe.js'), json.dumps(cfg)], capture_output=True, text=True, env=node_env())
     try:
         d = json.loads(r.stdout)
@@ -85,6 +144,7 @@ def css_checks(o):
         o.add('system: no :focus-visible rule', True)
     if re.search(r'animation|transition', body) and 'prefers-reduced-motion' not in t:
         o.add('system: motion without a prefers-reduced-motion fallback', True)
+    motion_css(o, body)
     tok = read_json(P('tokens.json'), {})
     for k in ('hover', 'focus', 'active', 'disabled', 'error'):
         if k not in (tok.get('states') or {}):
@@ -125,7 +185,7 @@ def summarise(o, d, label):
         if check in over:
             o.add(f'OVERRIDDEN {check} x{len(fs)}: {ex["page"]}@{ex["width"]} (CD: {over[check][:60]})')
             continue
-        o.add(f'{"warn" if check in WARN else "FAIL"} {check} x{len(fs)}: {ex["page"]}@{ex["width"]} {ex["detail"]}', check not in WARN)
+        o.add(f'{"warn" if is_warn(check) else "FAIL"} {check} x{len(fs)}: {ex["page"]}@{ex["width"]} {ex["detail"]}', not is_warn(check))
     for f in d['findings']:   # the full list goes to the report only
         o.lines.append(f'  - {f["check"]} {f["page"]}@{f["width"]}: {f["detail"]}') if len(o.lines) < 400 else None
     return counts
@@ -166,6 +226,8 @@ def main(a):
             if not os.path.exists(f):
                 die(f'pass: {os.path.relpath(f, P())} not built')
         d = probe(files, S['widths'], 'page')
+        pages_only = [f for f in files if not f.endswith('specimen.html')]
+        d['findings'] += slop(pages_only) + copy_tells(pages_only, read_json(P('brief.json'), {}))
         counts = summarise(o, d, mode)
         brief = read_json(P('brief.json'), {})
         b = brief.get('budget') or {}

@@ -35,5 +35,8 @@ echo "$C/node_modules" > "$H/.node"
 NODE_PATH="$C/node_modules" node -e "process.exit(require('fs').existsSync(require('playwright').chromium.executablePath()) ? 0 : 1)" 2>/dev/null \
   || "$C/node_modules/.bin/playwright" install chromium >/dev/null 2>&1 \
   || { echo "setup: Chromium for playwright could not be installed (run $C/node_modules/.bin/playwright install chromium)"; exit 1; }
+# the pinned Chromium also drives impeccable's detector (IMPECCABLE_BROWSER), so every machine scans with one browser
+NODE_PATH="$C/node_modules" node -e "process.stdout.write(require('playwright').chromium.executablePath())" > "$H/.chromium" 2>/dev/null
+[ -x "$C/node_modules/.bin/impeccable" ] || { echo "setup: impeccable is missing from the cache (rerun after deleting $C/package-lock.json)"; exit 1; }
 python3 -c "import PIL" 2>/dev/null || { echo "setup: Pillow is missing (python3 -m pip install -r $K/requirements.txt)"; exit 1; }
 echo "setup: cache ready (${did:- reused;} $(echo $fonts | wc -w | tr -d ' ') project face(s))"

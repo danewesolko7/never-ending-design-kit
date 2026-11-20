@@ -3,7 +3,7 @@
 | File | Section | Words |
 |---|---|---|
 | intro.md | Design review: the self-review before the gate | 55 |
-| measure.md | 1. Measure (scripts first) | 63 |
+| measure.md | 1. Measure (scripts first) | 112 |
 | visual-tests.md | 2. Visual tests (every view, 1440 and 390) | 120 |
 | foundations.md | 3. Foundations check | 36 |
 | usability.md | 4. Usability heuristics pass | 32 |

@@ -1,0 +1,10 @@
+{"id": "privacy", "title": "Privacy notice", "meta": {"title": "Privacy notice | Larch Street Library", "description": "What the library website collects, why we keep it, and your rights.", "og_image": "images/og.png"},
+ "sections": [{"id": "s1", "primitive": "stack", "text": {"h1": "Privacy notice", "body": [
+  "Larch Street Library is the controller for this website. We run it, and we are responsible for your data.",
+  "The site sets no cookies and has no forms. Our web host keeps a short log of each visit: your IP address, the time and the page. The purpose is to keep the site safe and working.",
+  "Our legal basis is our public task, and our interest in a safe site.",
+  "We keep these logs for 30 days. Then they are deleted.",
+  "The host keeps the logs in the EU. We do not send them to other countries.",
+  "You have rights over your data. You have the right to access it, to correct it and to ask us to delete it.",
+  "To use a right, contact us by email at privacy@example.org. You can also complain to your data protection authority.",
+  "This notice was last updated in November 2026."]}}]}

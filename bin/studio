@@ -4,6 +4,8 @@
 #   studio gate <gate.py arguments>                  --ready, --decide, --status, --checklist, --reopen, --retro ...
 #   studio tool <name> [arguments]                   any engine tool: pass.py, refs.py, uniq.py, shot.js, greek.py ...
 #   studio paths                                     where the engine, studio and current project are
+#   studio browse page <id> | <playwright-cli args>  drive the pinned Chromium (Playwright agent CLI): open a built
+#                                                    page, Tab, hover, scroll, snapshot; files land in out/browse/
 # KIT_HOME (the studio's workspace, holding studio/ and projects/) defaults to Claude Code's project folder, else the
 # working directory. KIT_PROJECT picks a project for this call (several projects can run side by side); else .current.
 # Tools run from the project folder, so the project-relative paths in the stage prompts work as written.
@@ -25,6 +27,14 @@ case "$cmd" in
       *.js) NODE_PATH="$(cat "$KIT_HOME/.node" 2>/dev/null)" exec node "$E/tools/$t" "$@" ;;
       *.sh) exec bash "$E/tools/$t" "$@" ;;
     esac ;;
+  browse)
+    inproj; mkdir -p out/browse; site="$PWD/out/site"; cd out/browse
+    # one session per project, the kit's pinned Chromium, and local built pages allowed (file://)
+    export PLAYWRIGHT_MCP_BROWSER="${PLAYWRIGHT_MCP_BROWSER:-chromium}" PLAYWRIGHT_MCP_ALLOW_UNRESTRICTED_FILE_ACCESS=true \
+           PLAYWRIGHT_CLI_SESSION="${PLAYWRIGHT_CLI_SESSION:-$(proj)}"
+    NM="$(cat "$KIT_HOME/.node" 2>/dev/null)"; [ -x "$NM/.bin/playwright" ] || { echo "studio: run tools/setup.sh first"; exit 1; }
+    if [ "$1" = page ]; then exec "$NM/.bin/playwright" cli open "file://$site/${2:-home}.html"; fi
+    exec "$NM/.bin/playwright" cli "$@" ;;
   paths) echo "engine  $E"; echo "studio  $KIT_HOME/studio"; p="$(proj)"; echo "project ${p:+$KIT_HOME/projects/$p}" ;;
-  *) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

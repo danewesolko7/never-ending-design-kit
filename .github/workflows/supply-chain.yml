@@ -1,0 +1,32 @@
+name: supply-chain
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '17 6 * * 1'
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: npm audit (pinned kit tools)
+        working-directory: engine/deps
+        run: npm audit --audit-level=high --package-lock-only
+      - name: pip-audit (requirements.txt)
+        run: python3 -m pip install pip-audit && pip-audit -r engine/requirements.txt
+      - name: SBOM (CycloneDX)
+        if: always()
+        working-directory: engine/deps
+        # the cache manifest has no version of its own; give the CI copy one so npm can name the root component
+        run: npm pkg set version=0.0.0 && npm sbom --sbom-format cyclonedx --package-lock-only > ../../sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sbom
+          path: sbom.cdx.json

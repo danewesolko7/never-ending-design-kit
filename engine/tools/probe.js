@@ -1,8 +1,13 @@
 // Browser probe for pass.py and greek.py: loads each page at each width and returns findings as JSON.
 //   node tools/probe.js '<json config>'
-// config: {files:[abs paths], widths:[1440,768,390,320], mode:"page"|"rough"|"system", expansion:1.3, artboard:8000}
+// config: {files:[abs paths], widths:[1440,768,390,320], mode:"page"|"rough"|"system", expansion:1.3, artboard:8000,
+//          vitals:{lcp_ms:2500, cls:0.1}}
 // Findings: {page, width, check, detail}. Checks: overflow, axe (AAA), widow, overlap, target, meta, heading, code,
-// expansion, motion, height, rules (stacked rules), numerals (figure styles). Prints one JSON object to stdout; pass.py summarises it.
+// expansion, motion, height, rules (stacked rules), numerals (figure styles), vitals (layout shift and largest paint,
+// measured from local files: a floor, not field data; interaction delay needs real visits), stress (worst-case
+// data at 320: a 30-letter compound in headings, a long email in text and links), spacing (WCAG 1.4.12 text
+// spacing at 390), keyboard (Tab through the page at 1440 and 390: skip link first, every control reached, no trap,
+// focus visible, the focused control never under a fixed bar: WCAG 2.1.1, 2.1.2, 2.4.3, 2.4.7, 2.4.11). Prints one JSON object to stdout; pass.py summarises it.
 const { chromium } = require('playwright'); const path = require('path'); const fs = require('fs');
 const cfg = JSON.parse(process.argv[2] || '{}');
 // WCAG 2.2 AAA by default; a brief may set "wcag": "AA" (pass.py passes it as cfg.wcag)
@@ -67,7 +72,7 @@ for (const base of [process.env.KIT_NODE, path.join(__dirname, 'node_modules')].
           const badClass = new Set(); for (const e of document.querySelectorAll('[class]')) for (const c of e.classList) if (!/^[a-z][a-z0-9]*-[a-z0-9-]+$/.test(c)) badClass.add(c);
           return { title: document.title, desc: g('meta[name="description"]'), ogt: g('meta[property="og:title"]'), ogd: g('meta[property="og:description"]'),
             ogi: g('meta[property="og:image"]'), lang: document.documentElement.lang, h1: document.querySelectorAll('h1').length, skips,
-            inline: document.querySelectorAll('[style]').length, styleTags: document.querySelectorAll('style').length,
+            inline: document.body.querySelectorAll('[style]').length,   // <html> may carry a script-set custom property (consent.js) styleTags: document.querySelectorAll('style').length,
             sheets: document.querySelectorAll('link[rel="stylesheet"]').length, badClass: [...badClass].slice(0, 6), landmarks: !!document.querySelector('main') && !!document.querySelector('header') && !!document.querySelector('footer'),
             imgs: [...document.querySelectorAll('img')].filter(i => !i.hasAttribute('alt') || !i.getAttribute('width') || !i.getAttribute('height')).length,
             lazy: [...document.querySelectorAll('img')].slice(1).filter(i => i.getAttribute('loading') !== 'lazy').length,
@@ -84,6 +89,13 @@ for (const base of [process.env.KIT_NODE, path.join(__dirname, 'node_modules')].
                 if (/mono/i.test(c.fontFamily)) continue; st.add(`${c.fontFamily.split(',')[0]} ${c.fontVariantNumeric}`); } return [...st]; })() };
         });
         info[name].meta = m;
+        const v = await p.evaluate(() => new Promise(res => { let cls = 0, lcp = 0;
+          try { new PerformanceObserver(l => { for (const e of l.getEntries()) if (!e.hadRecentInput) cls += e.value; }).observe({ type: 'layout-shift', buffered: true }); } catch (e) { }
+          try { new PerformanceObserver(l => { const es = l.getEntries(); if (es.length) lcp = es[es.length - 1].startTime; }).observe({ type: 'largest-contentful-paint', buffered: true }); } catch (e) { }
+          setTimeout(() => res({ cls, lcp }), 100); }));
+        info[name].vitals = v;
+        if (cfg.vitals && v.cls > cfg.vitals.cls) add(name, w, 'vitals', `layout shift ${v.cls.toFixed(3)} (budget ${cfg.vitals.cls}): give images and embeds their size`);
+        if (cfg.vitals && v.lcp > cfg.vitals.lcp_ms) add(name, w, 'vitals', `largest paint at ${Math.round(v.lcp)}ms from local files (budget ${cfg.vitals.lcp_ms}ms)`);
         if (!m.title) add(name, w, 'meta', 'no <title>'); if (!m.desc) add(name, w, 'meta', 'no meta description');
         if (!m.ogt || !m.ogd || !m.ogi) add(name, w, 'meta', 'sharing text or image missing (og:title, og:description, og:image)');
         if (!m.lang) add(name, w, 'meta', 'no lang attribute');
@@ -114,6 +126,76 @@ for (const base of [process.env.KIT_NODE, path.join(__dirname, 'node_modules')].
         if (e.overflow) add(name, w, 'expansion', `copy x${cfg.expansion} causes horizontal scroll at ${w}px`);
         if (e.clipped) add(name, w, 'expansion', `copy x${cfg.expansion} is clipped in ${e.clipped} element(s) at ${w}px`);
         await q.close();
+      }
+    }
+    if (cfg.mode === 'page') {
+      // stress: worst-case strings from real data (Emil Kowalski's break-ui catalogue): unbreakable words and emails
+      const st = await b.newPage({ viewport: { width: 320, height: 900 }, reducedMotion: 'reduce' });
+      await st.goto('file://' + file); await st.waitForTimeout(100);
+      const sr = await st.evaluate(() => {
+        const LONG = 'Benachrichtigungseinstellungen', MAIL = 'bartholomew.fitzgerald@northwind-industries-holdings.example.com';
+        for (const h of document.querySelectorAll('h1,h2,h3,h4')) h.append(' ' + LONG);
+        for (const e of document.querySelectorAll('main p, main li, main dd, main figcaption, footer p, footer a, header a, main a, button')) e.append(' ' + MAIL);
+        const o = { overflow: document.documentElement.scrollWidth > 321, clipped: [] };
+        for (const el of document.querySelectorAll('body *')) { const c = getComputedStyle(el);
+          if (/(hidden|clip)/.test(c.overflowX + c.overflow) && el.scrollWidth > el.clientWidth + 2 && el.textContent.trim()) o.clipped.push(el.className || el.tagName); }
+        return o;
+      });
+      if (sr.overflow) add(name, 320, 'stress', 'a long word or email scrolls the page sideways at 320px: allow it to wrap (overflow-wrap, min-width:0)');
+      for (const c of [...new Set(sr.clipped)].slice(0, 3)) add(name, 320, 'stress', `long text is cut off in ${c}`);
+      await st.close();
+      // spacing: WCAG 1.4.12 overrides; nothing may be cut off or overlap
+      const sp = await b.newPage({ viewport: { width: 390, height: 900 }, reducedMotion: 'reduce' });
+      await sp.goto('file://' + file); await sp.waitForTimeout(100);
+      await sp.addStyleTag({ content: '*{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}p{margin-bottom:2em!important}' });
+      const so = await sp.evaluate(() => {
+        const o = { overflow: document.documentElement.scrollWidth > 391, clipped: [] };
+        for (const el of document.querySelectorAll('body *')) { const c = getComputedStyle(el);
+          if (/(hidden|clip)/.test(c.overflow + c.overflowY + c.overflowX) && (el.scrollHeight > el.clientHeight + 2 || el.scrollWidth > el.clientWidth + 2) && el.textContent.trim()) o.clipped.push(el.className || el.tagName); }
+        return o;
+      });
+      if (so.overflow) add(name, 390, 'spacing', 'WCAG text spacing scrolls the page sideways at 390px');
+      for (const c of [...new Set(so.clipped)].slice(0, 3)) add(name, 390, 'spacing', `WCAG text spacing cuts text off in ${c} (no fixed heights on text)`);
+      await sp.close();
+      // keyboard: Tab through the page
+      for (const kw of [cfg.widths[0], 390]) {
+        const k = await b.newPage({ viewport: { width: kw, height: 900 }, reducedMotion: 'reduce' });
+        await k.goto('file://' + file); await k.waitForTimeout(150);
+        const all = await k.evaluate(() => {
+          const vis = e => { const r = e.getBoundingClientRect(); const c = getComputedStyle(e); return r.width > 0 && r.height > 0 && c.visibility !== 'hidden'; };
+          const els = [...document.querySelectorAll('a[href],button,input,select,textarea,[tabindex]')].filter(e => !e.disabled && e.tabIndex >= 0 && vis(e) && !e.closest('[hidden],[inert]'));
+          els.forEach((e, i) => e.setAttribute('data-kk', i));
+          return { n: els.length, positive: [...document.querySelectorAll('[tabindex]')].filter(e => e.tabIndex > 0).length };
+        });
+        if (all.positive) add(name, kw, 'keyboard', `${all.positive} element(s) with tabindex above 0 (focus order follows the source)`);
+        const seen = new Set(); let prev = null, first = null, trap = 0, lost = 0;
+        for (let i = 0; i < Math.min(all.n + 3, 120); i++) {
+          await k.keyboard.press('Tab');
+          await k.evaluate(() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))));   // focus styles settle
+          const f = await k.evaluate(() => {
+            const e = document.activeElement; if (!e || e === document.body) return { body: true };
+            const r = e.getBoundingClientRect(); const c = getComputedStyle(e);
+            const x = Math.min(Math.max(r.left + r.width / 2, 0), innerWidth - 1), y = Math.min(Math.max(r.top + r.height / 2, 0), innerHeight - 1);
+            const top = document.elementFromPoint(x, y);
+            const inView = r.bottom > 0 && r.top < innerHeight;
+            const off = r.right <= 0 || r.left >= innerWidth;   // focused but drawn off the screen (a skip link that never shows)
+            return { id: e.getAttribute('data-kk'), skip: e.classList.contains('k-skip'), label: (e.textContent || e.getAttribute('aria-label') || e.tagName).trim().slice(0, 30),
+              ring: (c.outlineStyle !== 'none' && parseFloat(c.outlineWidth) > 0) || (c.boxShadow && c.boxShadow !== 'none'),
+              off, covered: !off && inView && top && !(e === top || e.contains(top) || top.contains(e)) ? (top.className || top.tagName) : '' };
+          });
+          if (f.body) { lost++; if (seen.size >= all.n) break; continue; }
+          if (first === null) first = f;
+          if (f.id !== null && f.id === prev) trap++;
+          prev = f.id; if (f.id !== null) seen.add(f.id);
+          if (!f.ring) add(name, kw, 'keyboard', `no visible focus on "${f.label}"`);
+          if (f.covered) add(name, kw, 'keyboard', `focused "${f.label}" is hidden under ${String(f.covered).slice(0, 30)} (WCAG 2.4.11)`);
+          if (f.off) add(name, kw, 'keyboard', `focused "${f.label}" stays off the screen`);
+          if (seen.size >= all.n && all.n) break;
+        }
+        if (all.n && first && !first.skip) add(name, kw, 'keyboard', `the first Tab lands on "${first.label}", not the skip link`);
+        if (trap) add(name, kw, 'keyboard', 'focus stays on one control when Tab is pressed (a keyboard trap)');
+        if (all.n && seen.size < all.n) add(name, kw, 'keyboard', `${all.n - seen.size} of ${all.n} control(s) never take focus with Tab`);
+        await k.close();
       }
     }
     if (cfg.mode !== 'rough') {
